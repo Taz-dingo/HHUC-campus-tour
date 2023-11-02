@@ -12,40 +12,65 @@
     import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
     import { onMounted } from 'vue';
     import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+    // 引入dat.gui.js的一个类GUI
+    import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+
 
     const scene = new THREE.Scene();
+    const gui = new GUI();
 
     // 相机对象----------------------------------------
     // 相机输出画布尺寸(px)
     const width = window.innerWidth; //窗口文档显示区的宽度作为画布宽度
     const height = window.innerHeight; //窗口文档显示区的高度作为画布高度
 
-    const camera = new THREE.PerspectiveCamera(50,width/height,0.1,4000);
+    const cameraConfg = {
+        fov: 45,
+        near: 0.25,
+        far: 1000
+    };
+    const cameraFolder = gui.addFolder("相机属性设置");
+    const camera = new THREE.PerspectiveCamera(cameraConfg.fov,width/height,cameraConfg.near,cameraConfg.far);
+    {
+        cameraFolder.add(camera,'fov',20,100).name('视角').onChange((num) => {
+            camera.fov = num;
+            camera.updateProjectionMatrix();
+        });
+        cameraFolder.add(camera,'near',0.1,100).name('近端视野').onChange((num) => {
+            camera.near = num;
+            camera.updateProjectionMatrix();
+        });
+        cameraFolder.add(camera,'far',1,3000).name('远端视野').onChange((num) => {
+            camera.far = num;
+            camera.updateProjectionMatrix();
+        });
+    }
+    
+
     camera.position.set(200,200,200);
     camera.lookAt(0,0,0);
-    
-    
+
     // 渲染器
     const renderer = new THREE.WebGL1Renderer();
     renderer.setSize(width,height);
 
-
-    function render() {
-        renderer.render(scene, camera); //执行渲染操作
-        requestAnimationFrame(render);//请求再次执行渲染函数render，渲染下一帧
-    }
-
-    render();
-
-
     
-
     // 设置相机控件轨道控制器OrbitControls
     const controls = new OrbitControls(camera, renderer.domElement);
     // 如果OrbitControls改变了相机参数，重新调用渲染器渲染三维场景
     controls.addEventListener('change', function () {
         renderer.render(scene, camera); //执行渲染操作
     });//监听鼠标、键盘事件
+
+    function render() {
+        renderer.render(scene, camera); //执行渲染操作
+        requestAnimationFrame(render);//请求再次执行渲染函数render，渲染下一帧
+        // 浏览器控制台查看controls.target变化，辅助设置lookAt参数
+        console.log('controls.target',controls.target);
+    }
+
+    render();
+
 
     // AxesHelper：辅助观察的坐标系
     const axesHelper = new THREE.AxesHelper(150);
@@ -163,57 +188,60 @@
     // ------------------------
 
     // 创建GLTF加载器对象
-    // const loader = new GLTFLoader();
+    const loader = new GLTFLoader();
 
-    // loader.load( '/static/model3/Tree1.gltf', function ( gltf ) {
-    //     console.log('控制台查看加载gltf文件返回的对象结构',gltf);
-    //     console.log('gltf对象场景属性',gltf.scene);
-    //     // 返回的场景对象gltf.scene插入到threejs场景中
-    //     scene.add( gltf.scene );
-    // })
+    loader.load( '/static/model3/output3.glb', function ( gltf ) {
+        console.log('控制台查看加载gltf文件返回的对象结构',gltf);
+        console.log('gltf对象场景属性',gltf.scene);
+        // 返回的场景对象gltf.scene插入到threejs场景中
+        scene.add( gltf.scene );
+        gltf.scene.children.name = 'library'; 
+    })
 
     // ------------------------
 
-
+    // DACRO
     // Instantiate a loader
-const loader = new DRACOLoader();
+    // const loader = new DRACOLoader();
 
-// Specify path to a folder containing WASM/JS decoding libraries.
-loader.setDecoderPath( '/examples/jsm/libs/draco/' );
+    // // Specify path to a folder containing WASM/JS decoding libraries.
+    // loader.setDecoderPath( '/examples/jsm/libs/draco/' );
 
-// Optional: Pre-fetch Draco WASM/JS module.
-loader.preload();
+    // // Optional: Pre-fetch Draco WASM/JS module.
+    // loader.preload();
 
-// Load a Draco geometry
-loader.load(
-	// resource URL
-	'/static/model3/compressed.gltf',
-	// called when the resource is loaded
-	function ( geometry ) {
+    // // Load a Draco geometry
+    // loader.load(
+    //     // resource URL
+    //     '/static/model3/output2.glb',
+    //     // called when the resource is loaded
+    //     function ( geometry ) {
 
-		const material = new THREE.MeshStandardMaterial( { color: 0x606060 } );
-		const mesh = new THREE.Mesh( geometry, material );
-		scene.add( mesh );
+    //         const material = new THREE.MeshStandardMaterial( { color: 0x606060 } );
+    //         const mesh = new THREE.Mesh( geometry, material );
+    //         scene.add( mesh );
 
-	},
-	// called as loading progresses
-	function ( xhr ) {
+    //     },
+    //     // called as loading progresses
+    //     function ( xhr ) {
 
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+    //         console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
 
-	},
-	// called when loading has errors
-	function ( error ) {
+    //     },
+    //     // called when loading has errors
+    //     function ( error ) {
 
-		console.log( 'An error happened' );
+    //         console.log( 'An error happened' );
 
-	}
-);
+    //     }
+    // );
 
 
     //环境光:没有特定方向，整体改变场景的光照明暗
     const ambient = new THREE.AmbientLight(0xffffff, 2);
     scene.add(ambient);
+    gui.add(ambient,'intensity',0,2.0).name('环境光强度');
+
     const pointLight = new THREE.PointLight(0xffffff, 1.0);
     // 点光源位置
     pointLight.position.set(400, 2000, 100);//点光源放在x轴上
