@@ -14,9 +14,23 @@
     import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
     // 引入dat.gui.js的一个类GUI
     import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+    import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
+    const clock = new THREE.Clock();
+    // const container = document.getElementById( 'container' );
 
+    const renderer = new THREE.WebGLRenderer( { antialias: true } );
+    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    // container!.appendChild( renderer.domElement );
+
+    const pmremGenerator = new THREE.PMREMGenerator( renderer );
+
+    // 渲染器
     const scene = new THREE.Scene();
+    scene.background = new THREE.Color( 0xbfe3dd );
+    scene.environment = pmremGenerator.fromScene( new RoomEnvironment( renderer ), 0.04 ).texture;
+
     const gui = new GUI();
 
     // 相机对象----------------------------------------
@@ -50,18 +64,6 @@
     camera.position.set(200,200,200);
     camera.lookAt(0,0,0);
 
-    // 渲染器
-    const renderer = new THREE.WebGL1Renderer();
-    renderer.setSize(width,height);
-
-    
-    // 设置相机控件轨道控制器OrbitControls
-    const controls = new OrbitControls(camera, renderer.domElement);
-    // 如果OrbitControls改变了相机参数，重新调用渲染器渲染三维场景
-    controls.addEventListener('change', function () {
-        renderer.render(scene, camera); //执行渲染操作
-    });//监听鼠标、键盘事件
-
     function render() {
         renderer.render(scene, camera); //执行渲染操作
         requestAnimationFrame(render);//请求再次执行渲染函数render，渲染下一帧
@@ -69,7 +71,13 @@
         console.log('controls.target',controls.target);
     }
 
-    render();
+    // 设置相机控件轨道控制器OrbitControls
+    // camera controls
+    const controls = new OrbitControls( camera, renderer.domElement );
+    controls.target.set( 0, 0.5, 0 );
+    controls.update();
+    controls.enablePan = false;
+    controls.enableDamping = true;
 
 
     // AxesHelper：辅助观察的坐标系
@@ -188,15 +196,15 @@
     // ------------------------
 
     // 创建GLTF加载器对象
-    const loader = new GLTFLoader();
+    // const loader = new GLTFLoader();
 
-    loader.load( '/static/model3/output3.glb', function ( gltf ) {
-        console.log('控制台查看加载gltf文件返回的对象结构',gltf);
-        console.log('gltf对象场景属性',gltf.scene);
-        // 返回的场景对象gltf.scene插入到threejs场景中
-        scene.add( gltf.scene );
-        gltf.scene.children.name = 'library'; 
-    })
+    // loader.load( '/static/model3/library-0.5-1080-0.02-.glb', function ( gltf ) {
+    //     console.log('控制台查看加载gltf文件返回的对象结构',gltf);
+    //     console.log('gltf对象场景属性',gltf.scene);
+    //     // 返回的场景对象gltf.scene插入到threejs场景中
+    //     scene.add( gltf.scene );
+    //     gltf.scene.children.name = 'library'; 
+    // })
 
     // ------------------------
 
@@ -236,6 +244,27 @@
     //     }
     // );
 
+    // draco压缩解码导入
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath( '/static/jsm/libs/draco/gltf/' );
+
+    const loader = new GLTFLoader();
+    loader.setDRACOLoader( dracoLoader );
+    loader.load( '/static/model3/library.gltf', function ( gltf ) {
+
+        const model = gltf.scene;
+        model.position.set( 1, 1, 0 );
+        model.scale.set( 0.01, 0.01, 0.01 );
+        scene.add( model );
+
+        animate();
+
+    }, undefined, function ( e ) {
+
+        console.error( e );
+
+    } );
+
 
     //环境光:没有特定方向，整体改变场景的光照明暗
     const ambient = new THREE.AmbientLight(0xffffff, 2);
@@ -261,6 +290,20 @@
         // 如果相机的一些属性发生了变化，需要执行updateProjectionMatrix ()方法更新相机的投影矩阵
         camera.updateProjectionMatrix();
     };
+
+    function animate() {
+        requestAnimationFrame( animate );
+
+        // const delta = clock.getDelta();
+
+        // mixer.update( delta );
+
+        controls.update();
+
+        // stats.update();
+
+        renderer.render( scene, camera );
+    }
 
 
     // 渲染结果画布添加到网页
