@@ -21,6 +21,12 @@ const router = createRouter({
       name: 'scene2',
       component: ()=>import('@/components/Scene2.vue')
     },
+    
+    {
+      path: '/scene3',
+      name: 'scene3',
+      component: ()=>import('@/components/Scene3.vue')
+    },
 
     {
       path: '/test',
