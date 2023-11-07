@@ -1,4 +1,5 @@
 <template>
+    
   <div id="container">
 
   </div>
@@ -16,6 +17,7 @@
     // 引入dat.gui.js的一个类GUI
     import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
     import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { WireframeGeometry } from 'three';
 
     const stats = new Stats();
     document.body.appendChild( stats.dom );
@@ -86,17 +88,70 @@
 
         const model = gltf.scene;
         const modelConfg = {
-            x:100,
+            x:455,
             y:0,
-            z:100
+            z:280
         }
         model.position.set( modelConfg.x, modelConfg.y, modelConfg.z );
-        gui.add(model.position,'x',0,1000);
-        gui.add(model.position,'y',0,1000);
-        gui.add(model.position,'z',0,1000);
+        const modelFolder = gui.addFolder("模型属性设置");
+        modelFolder.add(model.position,'x',0,1000);
+        modelFolder.add(model.position,'y',0,1000);
+        modelFolder.add(model.position,'z',0,1000);
 
         // model.scale.set( 0.01, 0.01, 0.01 );
         scene.add( model );
+
+        const geometryConfig = {
+            width:100,
+            height:100,
+            depth:100
+        }
+        //创建一个长方体几何对象Geometry
+        const geometry = new THREE.BoxGeometry(geometryConfig.depth, geometryConfig.height, geometryConfig.depth); 
+        //创建一个材质对象Material
+        const material = new THREE.MeshBasicMaterial({
+            color: 0xff0000,//0xff0000设置材质颜色为红色
+            transparent:true,
+            opacity:0.4
+        }); 
+
+        function generateGeometry() {
+            updateGroupGeometry( mesh,
+                new THREE.BoxGeometry(
+                    geometryConfig.width, geometryConfig.height, geometryConfig.depth
+                )
+            );
+        }
+
+        // 清除与更新
+        function updateGroupGeometry( mesh, geometry ) {
+
+            // mesh.children[ 0 ].geometry.dispose();
+            mesh.geometry.dispose();
+
+            // mesh.children[ 0 ].geometry = new WireframeGeometry( geometry );
+            mesh.geometry = geometry;
+
+            // these do not update nicely together if shared
+
+        }
+
+        const boxFolder = gui.addFolder('方块属性设置');
+        boxFolder.add(geometryConfig,'width',0,1000).onChange(generateGeometry);
+        boxFolder.add(geometryConfig,'height',0,1000).onChange(generateGeometry);
+        boxFolder.add(geometryConfig,'depth',0,1000).onChange(generateGeometry);
+
+        // 两个参数分别为几何体geometry、材质material
+        const mesh = new THREE.Mesh(geometry, material); //网格模型对象Mesh
+        const meshFolder = gui.addFolder('网格属性设置');
+        meshFolder.add(mesh.position,'x',0,1000);
+        meshFolder.add(mesh.position,'y',0,1000);
+        meshFolder.add(mesh.position,'z',0,1000);
+
+        generateGeometry();
+
+        scene.add(mesh);  // 添加到场景中
+
 
         animate();
 
@@ -105,6 +160,8 @@
         console.error( e );
 
     } );
+
+
 
     // onresize 事件会在窗口被调整大小时发生
     window.onresize = function () {
