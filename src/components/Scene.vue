@@ -1,18 +1,22 @@
 <template>
+
     
-    <div id="container">
-        <!-- <div style="color: #ff0000;z-index:2;position: absolute;">111111111111111红色</div> -->
-        <!-- <div  id="red"  class="btn">红</div>
-        <div  id="green" class="btn">绿</div> -->
-
+    <div class="common-layout" >
+        <el-container>
+            <el-header>Header</el-header>
+            <el-main id="container">Main</el-main>
+        </el-container>
     </div>
+    <!-- <div id="container">
+        <el-header>Header-------------------------------------------------------------------------</el-header>
 
+    </div> -->
 </template>
 
 <script lang="ts" setup>
 // 引入three.js
 import * as THREE from 'three';
-import { onMounted  } from 'vue'
+import { defineCustomElement, onMounted  } from 'vue'
 
 // 引入扩展库OrbitControls.js
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -32,6 +36,7 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 // 实例化一个gui对象
 const gui = new GUI();
 //改变交互界面style属性
+console.log(top);
 gui.domElement.style.right = '0px';
 gui.domElement.style.width = '300px';
 
@@ -288,6 +293,11 @@ onMounted(()=>{
     document.getElementById('green')?.addEventListener('click',function(){
         mesh.material.color.set(0x00ff00);
     });
+
+    const container = document.getElementById('container');
+
+    gui.domElement.style.top = container?.getBoundingClientRect().top.toString() + 'px';
+    statsFPS.dom.style.top = container?.getBoundingClientRect().top.toString() + 'px';
 })
 
 </script>
