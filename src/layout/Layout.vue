@@ -1,0 +1,49 @@
+<script setup lang="ts">
+import PostList from '@/components/PostList.vue';
+import Scene from '../components/Scene.vue'
+import BDInfo from '@/components/BDInfo.vue';
+import { provide, ref } from 'vue';
+import Drawer from '@/components/Drawer.vue';
+import ScrollList from '@/components/ScrollList.vue';
+
+const scrollRef = ref();
+const drawerRef = ref();
+
+var chooseName = ref();
+
+const scene = ref();
+const clickEven=(val: { content: string; })=>{
+//   console.log(val);
+//   console.log(val);
+  scrollRef.value.load(val);
+  chooseName.value=val;
+  console.log('chooseName in Layout:'+chooseName.value);
+}
+
+// provide变量
+provide('chooseName',chooseName);
+
+
+</script>
+
+<template>
+    <el-container>
+        <el-header></el-header>
+
+        <el-aside>
+            
+            <ScrollList class="scroll" ref="scrollRef" ></ScrollList>
+            <Drawer ref="drawerRef">
+            </Drawer>
+        </el-aside>
+
+        <Scene ref="scene" @click-child="clickEven"></Scene>
+    </el-container>
+</template>
+
+<style>
+.scroll{
+    z-index: 1000;
+}
+
+</style>

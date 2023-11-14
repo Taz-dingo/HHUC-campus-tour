@@ -7,13 +7,26 @@ const router = createRouter({
     {
       path: '/',
       name: 'login',
-      component: ()=>import('@/views/login/index.vue')
+      component: ()=>import('@/components/login/index.vue')
+    },
+
+    {
+      path: '/layout',
+      name: 'layout',
+      component: ()=>import('@/layout/Layout.vue'),
     },
 
     {
       path: '/scene',
       name: 'scene',
-      component: ()=>import('@/components/Scene.vue')
+      component: ()=>import('@/components/Scene.vue'),
+      children:[
+        {
+          path:'posts', 
+          name:'Details',
+          component: ()=>import('@/views/Details.vue')
+        }
+      ]
     },
 
     {
@@ -30,7 +43,7 @@ const router = createRouter({
 
     {
       path: '/test',
-      component: ()=>import('@/views/test.vue')
+      component: ()=>import('@/components/ScrollList.vue')
     },
   
     

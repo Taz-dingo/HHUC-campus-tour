@@ -3,11 +3,19 @@
         <el-container>
             <el-header style="z-index: 1;">Header</el-header>
             <div id="container" ref="containerRef">
+
+                <div class="infoContainer" style="pointer-events: auto;" ref="descRef" >
+                    <div ref="closeRef">
+                        <el-icon ><Close /></el-icon>
+                    </div>
+                    
+                    <BDInfo :name="chooseObjName" :intro="'213'"></BDInfo>
+                    <!-- <PostList :posts="posts"></PostList> -->
+                </div>
+
                 
             </div>
-            <div id="tag" style="z-index: 1;pointer-events: none;" ref="tagRef" >
-                    1145141919
-            </div>
+
         </el-container>
     </div>
 </template>
@@ -38,10 +46,16 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 // 引入OutlinePass通道
 import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
+import PostList from './PostList.vue';
+import BDInfo from './BDInfo.vue';
+// import store from '@/store/store.js';
+import axios from 'axios';
+import { stat } from 'fs';
 
 const containerRef = ref();
-const tagRef = ref();
-
+const descRef = ref();
+const closeRef = ref();         // 关闭窗口dom
+let chooseObjName = '';    // 被选中建筑的name
 
 // 相机输出画布尺寸(px)
 const width = window.innerWidth;
@@ -86,15 +100,12 @@ const material = new THREE.MeshBasicMaterial({
     transparent:true, //开启透明
     opacity:0.5, //设置透明度
 })
-//MeshLambertMaterial受光照影响
-// const material = new THREE.MeshLambertMaterial(); 
-
 
 // 创建网格模型，：表示物体
 const mesh1 = new THREE.Mesh(geometry,material);
 const mesh2 = new THREE.Mesh(geometry,material);
 mesh1.material.color.set(0x00ff00);
-mesh1.name='mesh1';
+mesh1.name='a';
 mesh1.position.set(0,0,0);
 mesh2.name='mesh2';
 mesh2.position.set(100,100,0);
@@ -202,9 +213,7 @@ function onPointerClick( event: { clientX: number; clientY: number; } ) {
 }
 
 function render() {
-    
     // update the picking ray with the camera and pointer position
-	
     stats.begin();
     composer.render();
     renderer.render(scene, camera); // 执行渲染操作
@@ -219,8 +228,21 @@ function render() {
 
 window.addEventListener('click',onPointerClick);
 
-var chooseObj = null;
-renderer.domElement.addEventListener('click',function(event) {
+const posts=ref(Array);
+
+var tagtest: THREE.Object3D<THREE.Event>;
+var chooseObj: THREE.Object3D<THREE.Event> | null = null;
+var descObj: THREE.Object3D<THREE.Event>;
+var desc3DObj: THREE.Object3D<THREE.Event>;
+
+const emit = defineEmits(['clickChild']);
+
+// 点击检测事件    
+const clickChild = renderer.domElement.addEventListener('click',function(event) {
+    // 先清空之前的信息
+    posts.value=[]
+    // chooseObj?.remove(descObj);
+
     onPointerClick(event);
     // 在点击位置生成raycaster射线ray
     raycaster.setFromCamera( pointer, camera );
@@ -229,29 +251,61 @@ renderer.domElement.addEventListener('click',function(event) {
     console.log(intersects);
     if(intersects.length > 0 ){
         chooseObj = intersects[0].object;
-        const name = intersects[0].object.name;
-        console.log(name);
-        chooseObj.material.color.set( 0xff0000 );
-        console.log(chooseObj.id);
+        chooseObjName = chooseObj.name;
+        // 向父组件传值
+        emit('clickChild',chooseObjName);
+        // load();
+        console.log(chooseObjName);
         outlinePass.selectedObjects = [chooseObj];
+        // chooseObj.add(tagtest);
+        chooseObj.add(descObj);
+
+        // chooseObj.add(desc3DObj);
+        descObj.position.set(100,0,0);
+        // scene.add(descObj);
+    }else if(intersects.length==0){
+        // posts.value=[];
+        chooseObj?.remove(descObj);
     }
 })
 
+
+
 render();
 
+// const posts:Array<any> = [];
 
 onMounted(()=>{
+    // dom操作
     console.log(containerRef.value);
-    console.log(tagRef.value);
+    console.log(descRef.value);
+    console.log(closeRef.value);
+
+    // 鼠标单击按钮，关闭HTML标签
+    closeRef.value.addEventListener('click',function(){
+        console.log("clicked")
+        console.log(chooseObj);
+        if (chooseObj) {
+            chooseObj.remove(descObj); //从场景移除
+        }
+    })
+
     containerRef.value.appendChild(renderer.domElement);
     gui.domElement.style.top = containerRef.value.getBoundingClientRect().top.toString() + 'px';
     stats.dom.style.top = containerRef.value.getBoundingClientRect().top.toString() + 'px';
-
-    const tagtest = new CSS3DObject(tagRef.value);
-    mesh2.add(tagtest);
+    // stats.dom.style.right='0px';
+    // stats.dom.style.bottom='0px';
+    // stats.dom.style.display='flex';
+    
+    descObj = new CSS2DObject(descRef.value);
+    desc3DObj = new CSS3DObject(descRef.value);
+    
 });
 
 </script>
+
+
+
 
 <style>
     #container {
@@ -261,6 +315,25 @@ onMounted(()=>{
         height: 100vh;
     }
 
+    .infoContainer{
+        background-color: azure;
+        margin: 10px;
+        opacity: 0.9;
+    }
+
+    .post {
+        border: 1px solid black;
+        padding: 10px;
+        margin: 10px;
+    }
+
+    .footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        color: gray;
+    }
 
     .btn{
         position: relative;
@@ -274,7 +347,5 @@ onMounted(()=>{
         margin:0;
         overflow: hidden;
     }
-
-
-
-</style>
+    
+</style>@/store/store.js

@@ -17,7 +17,6 @@
     // 引入dat.gui.js的一个类GUI
     import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
     import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { WireframeGeometry } from 'three';
 
     const stats = new Stats();
     document.body.appendChild( stats.dom );
