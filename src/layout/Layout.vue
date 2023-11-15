@@ -21,10 +21,6 @@ const clickEven=(val: { content: string; })=>{
   console.log('chooseName in Layout:'+chooseName.value);
 }
 
-// provide变量
-provide('chooseName',chooseName);
-
-
 </script>
 
 <template>
@@ -33,7 +29,7 @@ provide('chooseName',chooseName);
 
         <el-aside>
             
-            <ScrollList class="scroll" ref="scrollRef" ></ScrollList>
+            <ScrollList :name="chooseName" class="scroll" ref="scrollRef" ></ScrollList>
             <!-- <Drawer ref="drawerRef">
             </Drawer> -->
 

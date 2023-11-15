@@ -1,6 +1,6 @@
 <template>
     <el-button class="button" type="primary" style="margin-left: 16px" @click="drawer = true">
-      open
+      >
     </el-button>
   
     <el-drawer 
@@ -12,10 +12,10 @@
     modal-class="modal"
     direction="ltr"
     >
-    
+        <h1 class="drawer_title">{{ name }}</h1>
         <div 
         v-infinite-scroll="load" 
-        infinite-scroll-distance="0"
+        infinite-scroll-distance="10"
         infinite-scroll-delay="200" 
         class="infinite-list" 
         style="overflow: auto">
@@ -56,7 +56,9 @@ import SinglePost from './SinglePost.vue';
 const posts = ref(Array);
 const drawer = ref(false);
 const innerDrawer = ref(false);
-
+defineProps({
+    name:String
+});
 // const name:any = inject('chooseName');
 var pageSize = 8;
 // console.log('name in ScrollList:' + name.value);
@@ -127,14 +129,21 @@ defineExpose({load});
 
 .el-drawer{
     pointer-events: auto;
-    
+
 }
+
 .button{
     position: absolute;
-    top:0px;
-    left: 100px;
+    top:50%;
+    left: 0;
     z-index: 1000;
+}
+.drawer_title{
+    text-align: center;
+    font-size: 2em;
+    margin:auto;
 }
 
 </style>
   
+

@@ -1,5 +1,6 @@
 <template>
-    <div>
+
+    <div class="articleContainer">
         <h1>{{ article.title }}</h1>
         <p>{{ article.content }}</p>
         <h3>评论</h3>
@@ -12,6 +13,7 @@
         <el-button type="primary" @click="submitComment">提交评论</el-button>
     </div>
 </template>
+
    
 <script>
 import { ref, onMounted } from "vue";
@@ -79,5 +81,11 @@ export default {
 
 .comment-input {
     margin-bottom: 20px;
+}
+.articleContainer{
+    width: 19%;
+    border:1px solid #ccc!important;
+    border-radius: 20px;
+    padding: 20px;
 }
 </style>

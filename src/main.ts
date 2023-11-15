@@ -6,6 +6,7 @@ import router from './router';
 import Element from "element-plus";
 import 'element-plus/dist/index.css'
 import axios from 'axios'
+import pinia from '@/store'
 // import './mock'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
@@ -20,6 +21,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 
 app.use(router);
 app.use(Element);
+app.use(pinia);
 // 配置vue启用axios
 app.config.globalProperties.$axios = axios;
 
