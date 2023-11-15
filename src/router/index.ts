@@ -43,6 +43,10 @@ const router = createRouter({
 
     {
       path: '/test',
+      component: ()=>import('@/components/article/ArticleDetail.vue')
+    },
+    {
+      path: '/scroll',
       component: ()=>import('@/components/ScrollList.vue')
     },
   

@@ -10,6 +10,7 @@
                     </div>
                     
                     <BDInfo :name="chooseObjName" :intro="'213'"></BDInfo>
+                    <ScrollList></ScrollList>
                     <!-- <PostList :posts="posts"></PostList> -->
                 </div>
 
@@ -51,6 +52,7 @@ import BDInfo from './BDInfo.vue';
 // import store from '@/store/store.js';
 import axios from 'axios';
 import { stat } from 'fs';
+import type ScrollListVue from './ScrollList.vue';
 
 const containerRef = ref();
 const descRef = ref();

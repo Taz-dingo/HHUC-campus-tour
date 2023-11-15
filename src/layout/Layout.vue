@@ -5,6 +5,7 @@ import BDInfo from '@/components/BDInfo.vue';
 import { provide, ref } from 'vue';
 import Drawer from '@/components/Drawer.vue';
 import ScrollList from '@/components/ScrollList.vue';
+import ArticleDetail from '@/components/article/ArticleDetail.vue';
 
 const scrollRef = ref();
 const drawerRef = ref();
@@ -33,8 +34,10 @@ provide('chooseName',chooseName);
         <el-aside>
             
             <ScrollList class="scroll" ref="scrollRef" ></ScrollList>
-            <Drawer ref="drawerRef">
-            </Drawer>
+            <!-- <Drawer ref="drawerRef">
+            </Drawer> -->
+
+            <!-- <ArticleDetail :id="1"></ArticleDetail> -->
         </el-aside>
 
         <Scene ref="scene" @click-child="clickEven"></Scene>

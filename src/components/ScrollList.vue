@@ -1,20 +1,52 @@
 <template>
-    <div 
-    v-infinite-scroll="load" 
-    infinite-scroll-distance="0"
-    infinite-scroll-delay="200" 
-    class="infinite-list" 
-    style="overflow: auto">
-        <!-- <li v-for="i in count" :key="i" class="infinite-list-item">
-            {{ i }}
-        </li> -->
-        <el-scrollbar >
-            <div v-for="post in posts" :key="posts.articleId">
-                <SinglePost :post="post"></SinglePost>
-            </div>
-        </el-scrollbar>
+    <el-button class="button" type="primary" style="margin-left: 16px" @click="drawer = true">
+      open
+    </el-button>
+  
+    <el-drawer 
+    v-model="drawer" 
+    title="I'm outer Drawer" 
+    size="20%" 
+    :modal="false"
+    :close-on-click-modal="false"
+    modal-class="modal"
+    direction="ltr"
+    >
+    
+        <div 
+        v-infinite-scroll="load" 
+        infinite-scroll-distance="0"
+        infinite-scroll-delay="200" 
+        class="infinite-list" 
+        style="overflow: auto">
+            <el-scrollbar >
+                <div v-for="post in posts" :key="posts.articleId">
+                    <SinglePost :post="post"></SinglePost>
+                </div>
+            </el-scrollbar>
+        </div>
 
-    </div>
+        <div>
+            <el-button @click="innerDrawer = true">Click me!</el-button>
+            
+            <el-drawer
+            v-model="innerDrawer"
+            title="I'm inner Drawer"
+            :append-to-body="true"
+            :modal="false"
+            :close-on-click-modal="false"
+            modal-class="modal"
+            aria-modal="false"
+            size="19%"
+            direction="ltr"
+            >
+                <ArticleDetail></ArticleDetail>
+                <p>_(:зゝ∠)_</p>
+            </el-drawer>
+        </div>
+    </el-drawer>
+    
+    
 </template>
   
 <script lang="ts" setup>
@@ -22,12 +54,14 @@ import axios from 'axios';
 import { inject, ref, toRefs } from 'vue'
 import SinglePost from './SinglePost.vue';
 const posts = ref(Array);
+const drawer = ref(false);
+const innerDrawer = ref(false);
 
-const name:any = inject('chooseName');
+// const name:any = inject('chooseName');
 var pageSize = 8;
-console.log('name in ScrollList:' + name.value);
+// console.log('name in ScrollList:' + name.value);
 
-const load = async () => {
+const load = async (name: string) => {
     try {
 
         let data: any;
@@ -35,7 +69,7 @@ const load = async () => {
             method: 'post',
             url: '/areaarticle',
             data: {
-                areaId: name.value,
+                areaId: name,
                 page: 1,
                 pagesize: pageSize
             }
@@ -85,5 +119,22 @@ defineExpose({load});
 .infinite-list .infinite-list-item+.list-item {
     margin-top: 10px;
 }
+
+.modal{
+      pointer-events: none;
+      opacity: 0.9;
+}
+
+.el-drawer{
+    pointer-events: auto;
+    
+}
+.button{
+    position: absolute;
+    top:0px;
+    left: 100px;
+    z-index: 1000;
+}
+
 </style>
   
