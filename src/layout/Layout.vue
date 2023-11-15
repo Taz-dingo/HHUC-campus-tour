@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import PostList from '@/components/PostList.vue';
-import Scene from '../components/Scene.vue'
+import Scene from '../components/scene/Scene.vue'
 import BDInfo from '@/components/BDInfo.vue';
 import { provide, ref } from 'vue';
 import Drawer from '@/components/Drawer.vue';

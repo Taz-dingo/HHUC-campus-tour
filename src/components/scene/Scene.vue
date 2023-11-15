@@ -47,12 +47,12 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 // 引入OutlinePass通道
 import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
-import PostList from './PostList.vue';
-import BDInfo from './BDInfo.vue';
+import PostList from '../PostList.vue';
+import BDInfo from '../BDInfo.vue';
 // import store from '@/store/store.js';
 import axios from 'axios';
 import { stat } from 'fs';
-import type ScrollListVue from './ScrollList.vue';
+import type ScrollListVue from '../ScrollList.vue';
 
 const containerRef = ref();
 const descRef = ref();

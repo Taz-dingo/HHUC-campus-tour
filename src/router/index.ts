@@ -19,7 +19,7 @@ const router = createRouter({
     {
       path: '/scene',
       name: 'scene',
-      component: ()=>import('@/components/Scene.vue'),
+      component: ()=>import('@/components/scene/Scene.vue'),
       children:[
         {
           path:'posts', 
@@ -32,13 +32,13 @@ const router = createRouter({
     {
       path: '/scene2',
       name: 'scene2',
-      component: ()=>import('@/components/Scene2.vue')
+      component: ()=>import('@/components/scene/Scene2.vue')
     },
     
     {
       path: '/scene3',
       name: 'scene3',
-      component: ()=>import('@/components/Scene3.vue')
+      component: ()=>import('@/components/scene/Scene3.vue')
     },
 
     {
