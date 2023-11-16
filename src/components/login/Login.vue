@@ -1,20 +1,28 @@
 <template>
-    <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="rules" label-width="120px" class="demo-ruleForm">
+    <div class="container">
+        <div class="formContainer">
+            <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="rules" label-width="120px" class="ruleForm">
 
-        <h1 class="title">登录</h1>
-        <h2 class="title">Login</h2>
-        <el-form-item label="账号" prop="uname">
-            <el-input v-model="ruleForm.uname" type="text" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="密码" prop="pass">
-            <el-input v-model="ruleForm.pass" type="password" autocomplete="off" />
-        </el-form-item>
-        <el-form-item>
-            <el-button type="primary" @click="submitForm(ruleFormRef)">提交</el-button>
-            <el-button @click="resetForm(ruleFormRef)">重置</el-button>
-            <el-button @click="switchToRegister">注册</el-button>
-        </el-form-item>
-    </el-form>
+                <h1 class="title">登录</h1>
+                <h2 class="title">Login</h2>
+
+                <el-form-item label="账号" prop="uname">
+                    <el-input v-model="ruleForm.uname" type="text" autocomplete="off" />
+                </el-form-item>
+
+                <el-form-item label="密码" prop="pass">
+                    <el-input v-model="ruleForm.pass" type="password" autocomplete="off" />
+                </el-form-item>
+
+                <el-form-item>
+                    <el-button type="primary" @click="submitForm(ruleFormRef)">提交</el-button>
+                    <el-button @click="resetForm(ruleFormRef)">重置</el-button>
+                    <el-button @click="switchToRegister">注册</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
+
+    </div>
 </template>
   
 <script lang="ts" setup>
@@ -25,7 +33,7 @@ import router from '@/router';
 
 const ruleFormRef = ref<FormInstance>();
 
-const switchToRegister = () =>{
+const switchToRegister = () => {
     router.push('/register');
 };
 
@@ -85,16 +93,16 @@ const submitForm = (formEl: FormInstance | undefined) => {
                         alert('登录成功！');
                         router.push('/');
                     }
-                     else {  // 用户名正确密码错误
+                    else {  // 用户名正确密码错误
                         alert('密码错误！');
                         // 重置密码
                         // ruleForm.uname='';
                         // ruleForm.pass='';
                         resetForm(ruleFormRef.value);
                     }
-                }).catch(function (response){
+                }).catch(function (response) {
                     // 账号错误
-                    alert('账号错误！');
+                    alert('账号不存在！');
                     resetForm(ruleFormRef.value);
                 });
 
@@ -115,15 +123,28 @@ const resetForm = (formEl: FormInstance | undefined) => {
 }
 
 
-
-
 </script>
 
 
 <style>
-.demo-ruleForm {
+.container {
+    position: absolute;
+    width: 99.5%;
+    height: 99%;
+    overflow: hidden;
+    background-image: url('/static/img/background2.png');
+    background-size: cover;
+    /* background-position: 10%; */
+}
+
+.ruleForm {
     width: 600px;
     margin: auto auto;
+}
+.formContainer{
+    top:20%;
+    left: 35%;
+    position: absolute;
 }
 
 .title {

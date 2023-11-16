@@ -29,7 +29,7 @@
     // 从立方体贴图环境纹理生成经过预过滤的Mipmapped辐射环境贴图(PMREM)
     const pmremGenerator = new THREE.PMREMGenerator( renderer );
 
-    // 渲染器
+    // 三维场景
     const scene = new THREE.Scene();
     scene.background = new THREE.Color( 0xbfe3dd );
     scene.environment = pmremGenerator.fromScene( new RoomEnvironment( renderer ), 0.04 ).texture;
@@ -149,6 +149,7 @@
 
         generateGeometry();
 
+    
         scene.add(mesh);  // 添加到场景中
 
 

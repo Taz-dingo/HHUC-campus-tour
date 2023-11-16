@@ -104,7 +104,7 @@ const material = new THREE.MeshBasicMaterial({
 })
 
 // 创建网格模型，：表示物体
-const mesh1 = new THREE.Mesh(geometry,material);
+const mesh1 = new THREE.Mesh(new THREE.BoxGeometry(100,100,100),material);
 const mesh2 = new THREE.Mesh(geometry,material);
 mesh1.material.color.set(0x00ff00);
 mesh1.name='a';
@@ -264,7 +264,8 @@ const clickChild = renderer.domElement.addEventListener('click',function(event) 
         chooseObj.add(descObj);
 
         // chooseObj.add(desc3DObj);
-        descObj.position.set(100,0,0);
+        descObj.position.set(0, 0, 0);
+        descObj.scale.set(10,10,10);
         // scene.add(descObj);
     }else if(intersects.length==0){
         // posts.value=[];
@@ -296,9 +297,7 @@ onMounted(()=>{
     containerRef.value.appendChild(renderer.domElement);
     gui.domElement.style.top = containerRef.value.getBoundingClientRect().top.toString() + 'px';
     stats.dom.style.top = containerRef.value.getBoundingClientRect().top.toString() + 'px';
-    // stats.dom.style.right='0px';
-    // stats.dom.style.bottom='0px';
-    // stats.dom.style.display='flex';
+
     
     descObj = new CSS2DObject(descRef.value);
     desc3DObj = new CSS3DObject(descRef.value);

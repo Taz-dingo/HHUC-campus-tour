@@ -1,27 +1,32 @@
 <template>
-    <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="rules" label-width="120px" class="demo-ruleForm">
+    <div class="container">
+        <div class="formContainer">
+            <el-form ref="ruleFormRef" :model="ruleForm" status-icon :rules="rules" label-width="120px" class="ruleForm">
 
-        <h1 class="title">注册</h1>
-        <h2 class="title">Register</h2>
-        <el-form-item label="昵称" prop="uname">
-            <el-input v-model="ruleForm.uname" type="text" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="账号" prop="uid">
-            <el-input v-model="ruleForm.uid" type="text" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="密码" prop="pass">
-            <el-input v-model="ruleForm.pass" type="password" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="确认密码" prop="checkPass">
-            <el-input v-model="ruleForm.checkPass" type="password" autocomplete="off" />
-        </el-form-item>
-        <el-form-item>
-            
-            <el-button type="primary" @click="submitForm(ruleFormRef)">提交</el-button>
-            <el-button @click="resetForm(ruleFormRef)">重置</el-button>
-            <el-button @click="goBack">返回</el-button>
-        </el-form-item>
-    </el-form>
+                <h1 class="title">注册</h1>
+                <h2 class="title">Register</h2>
+                <el-form-item label="昵称" prop="uname">
+                    <el-input v-model="ruleForm.uname" type="text" autocomplete="off" />
+                </el-form-item>
+                <el-form-item label="账号" prop="uid">
+                    <el-input v-model="ruleForm.uid" type="text" autocomplete="off" />
+                </el-form-item>
+                <el-form-item label="密码" prop="pass">
+                    <el-input v-model="ruleForm.pass" type="password" autocomplete="off" />
+                </el-form-item>
+                <el-form-item label="确认密码" prop="checkPass">
+                    <el-input v-model="ruleForm.checkPass" type="password" autocomplete="off" />
+                </el-form-item>
+                <el-form-item>
+
+                    <el-button type="primary" @click="submitForm(ruleFormRef)">提交</el-button>
+                    <el-button @click="resetForm(ruleFormRef)">重置</el-button>
+                    <el-button @click="goBack">返回</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
+
+    </div>
 </template>
   
 <script lang="ts" setup>
@@ -72,25 +77,25 @@ const validatePass = (rule: any, value: any, callback: any) => {
     }
 }
 const validatePass2 = (rule: any, value: any, callback: any) => {
-  if (value === '') {
-    callback(new Error('请再次输入密码'))
-  } else if (value !== ruleForm.pass) {
-    callback(new Error("两次密码不一致!"))
-  } else {
-    callback()
-  }
+    if (value === '') {
+        callback(new Error('请再次输入密码'))
+    } else if (value !== ruleForm.pass) {
+        callback(new Error("两次密码不一致!"))
+    } else {
+        callback()
+    }
 }
 
 const ruleForm = reactive({
-    uname:'',
-    uid:'',
+    uname: '',
+    uid: '',
     pass: '',
-    checkPass:'',
+    checkPass: '',
 })
 
 const rules = reactive<FormRules<typeof ruleForm>>({
     uname: [{ validator: validateUname, trigger: 'blur' }],
-    uid:[{ validator: validateUid, trigger: 'blur' }],
+    uid: [{ validator: validateUid, trigger: 'blur' }],
     pass: [{ validator: validatePass, trigger: 'blur' }],
     checkPass: [{ validator: validatePass2, trigger: 'blur' }],
 })
@@ -119,7 +124,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
                         alert('注册成功！');
                         router.push('/login');
                     } else {  // 用户名正确密码错误
-                        alert('error1！');
+                        alert('账号已存在，请重试！');
                         // 重置密码
                         resetForm(ruleFormRef.value);
                     }
@@ -152,10 +157,27 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
 
 <style>
-.demo-ruleForm {
+.container {
+    position: absolute;
+    width: 99.5%;
+    height: 99%;
+    overflow: hidden;
+    background-image: url('/static/img/background2.png');
+    background-size: cover;
+    /* background-position: 10%; */
+}
+
+.ruleForm {
     width: 600px;
     margin: auto auto;
 }
+
+.formContainer {
+    top: 20%;
+    left: 35%;
+    position: absolute;
+}
+
 
 .title {
     text-align: center;

@@ -31,7 +31,7 @@ const router = createRouter({
     {
       path: '/scene',
       name: 'scene',
-      component: ()=>import('@/components/scene/Scene.vue'),
+      component: ()=>import('@/components/scene/Scenecopy.vue'),
       children:[
         {
           path:'posts', 

@@ -37,7 +37,7 @@ defineProps({
     name: String
 });
 // const name:any = inject('chooseName');
-var pageSize = 8;
+var pageSize = 18;
 // console.log('name in ScrollList:' + name.value);
 
 var isDetail = false;
