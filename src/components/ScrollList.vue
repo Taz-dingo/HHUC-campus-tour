@@ -1,67 +1,57 @@
 <template>
     <el-button class="button" type="primary" style="margin-left: 16px" @click="drawer = true">
-      >
+        >
     </el-button>
-  
-    <el-drawer 
-    v-model="drawer" 
-    title="I'm outer Drawer" 
-    size="20%" 
-    :modal="false"
-    :close-on-click-modal="false"
-    modal-class="modal"
-    direction="ltr"
-    >
+
+    <el-drawer v-model="drawer" title="I'm outer Drawer" size="20%" :modal="false" :close-on-click-modal="false"
+        modal-class="modal" direction="ltr">
         <h1 class="drawer_title">{{ name }}</h1>
-        <div 
-        v-infinite-scroll="load" 
-        infinite-scroll-distance="10"
-        infinite-scroll-delay="200" 
-        class="infinite-list" 
-        style="overflow: auto">
-            <el-scrollbar >
-                <div v-for="post in posts" :key="posts.articleId">
-                    <SinglePost :post="post"></SinglePost>
+        <div v-infinite-scroll="load" infinite-scroll-distance="10" infinite-scroll-delay="200" class="infinite-list"
+            style="overflow: auto">
+            <el-scrollbar>
+                <div class="postList">
+                    <div v-for="post in posts" :key="posts.articleId">
+                        <SinglePost @click-child="clickEven" :post="post" ref="postRef"></SinglePost>
+                    </div>
+                </div>
+
+                <div class="article">
+                    <ArticleDetail ref="articleRef"></ArticleDetail>
                 </div>
             </el-scrollbar>
         </div>
 
-        <div>
-            <el-button @click="innerDrawer = true">Click me!</el-button>
-            
-            <el-drawer
-            v-model="innerDrawer"
-            title="I'm inner Drawer"
-            :append-to-body="true"
-            :modal="false"
-            :close-on-click-modal="false"
-            modal-class="modal"
-            aria-modal="false"
-            size="19%"
-            direction="ltr"
-            >
-                <ArticleDetail></ArticleDetail>
-                <p>_(:зゝ∠)_</p>
-            </el-drawer>
-        </div>
+
     </el-drawer>
-    
-    
 </template>
   
 <script lang="ts" setup>
 import axios from 'axios';
 import { inject, ref, toRefs } from 'vue'
 import SinglePost from './SinglePost.vue';
+import ArticleDetail from '@/components/article/ArticleDetail.vue';
 const posts = ref(Array);
 const drawer = ref(false);
 const innerDrawer = ref(false);
 defineProps({
-    name:String
+    name: String
 });
 // const name:any = inject('chooseName');
 var pageSize = 8;
 // console.log('name in ScrollList:' + name.value);
+
+var isDetail = false;
+
+var postName = ref();
+const postRef = ref();
+const articleRef = ref();
+const clickEven = (val: { content: string }) => {
+    isDetail=true;
+    articleRef.value.fetchArticle(val);
+    articleRef.value.fetchComments(val);
+    postName.value = val;
+    console.log('postName in ScrollList: ' + postName.value);
+};
 
 const load = async (name: string) => {
     try {
@@ -94,8 +84,9 @@ const load = async (name: string) => {
         console.log(error);
     }
 };
-// load('a');
-defineExpose({load});
+
+// 暴露load方法
+defineExpose({ load });
 
 </script>
   
@@ -122,28 +113,28 @@ defineExpose({load});
     margin-top: 10px;
 }
 
-.modal{
-      pointer-events: none;
-      opacity: 0.9;
+.modal {
+    pointer-events: none;
+    opacity: 0.9;
 }
 
-.el-drawer{
+.el-drawer {
     pointer-events: auto;
 
 }
 
-.button{
+.button {
     position: absolute;
-    top:50%;
+    top: 50%;
     left: 0;
     z-index: 1000;
 }
-.drawer_title{
+
+.drawer_title {
     text-align: center;
     font-size: 2em;
-    margin:auto;
+    margin: auto;
 }
-
 </style>
   
 

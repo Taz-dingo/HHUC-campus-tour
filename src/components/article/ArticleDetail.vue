@@ -1,76 +1,171 @@
 <template>
-
     <div class="articleContainer">
-        <h1>{{ article.title }}</h1>
-        <p>{{ article.content }}</p>
-        <h3>评论</h3>
-        <div v-for="comment in comments" :key="comment.commentId" class="comment">
-            <p>{{ comment.content }}</p>
+        <div class="article">
+
+            <div>
+                <h1>{{ article.title }}</h1>
+                <p class="articleText">{{ article.content }}</p>
+            </div>
+
+            <el-descriptions>
+                <div clas="footer">
+                    <el-descriptions-item label="">kooriookami</el-descriptions-item>
+                    <el-descriptions-item label="">
+                        <el-tag size="small">School</el-tag>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="">1900-01-01 </el-descriptions-item>
+                </div>
+            </el-descriptions>
+
         </div>
-        <h3>发表评论</h3>
-        <el-input type="textarea" placeholder="请输入评论内容" v-model="newCommentContent" class="comment-input">
-        </el-input>
-        <el-button type="primary" @click="submitComment">提交评论</el-button>
+        <div class="commentArea">
+            <h3>评论</h3>
+            <div v-infinite-scroll="fetchComments" infinite-scroll-distance="10" infinite-scroll-delay="200" class="infinite-list"
+                style="overflow: auto">
+                <el-scrollbar>
+                    <div class="comment" v-for="comment in articleComments" :key="comment.commentId">
+                        <p class="commentText">{{ comment.content }}</p>
+                        <button class="replyButton" @click="clickReply">回复</button>
+                        <div class="reply" v-for="reply in comment.reply" :key="reply.commentId">
+                            <p class="replyText">{{ reply.content }}</p>
+                        </div>
+                    </div>
+                </el-scrollbar>
+            </div>
+
+            <h3>发表评论</h3>
+            <el-input class="commentInput" type="textarea" placeholder="请输入评论内容" v-model="newCommentContent">
+            </el-input>
+            <el-button type="primary" @click="submitComment">提交评论</el-button>
+        </div>
+
     </div>
 </template>
 
    
-<script>
+<script setup lang="ts">
 import { ref, onMounted } from "vue";
 import axios from "axios";
 
-export default {
-    props: ["id"],
-    setup(props) {
-        const article = ref({});
-        const comments = ref([]);
-        const newCommentContent = ref("");
+const id = ref();
+const article = ref({});
+const comments = ref([]);
 
-        const fetchArticle = async () => {
-            // const response = await axios.get(`/detailarticle/${props.id}`);
-            const response = await axios({
-                method: 'post',
-                url: 'detailarticle',
-                data: {
-                    articleId: 1
-                }
-            });
+// 文章评论
+const articleComments = ref([]);
+const commenstReply = ref([]);
+const newCommentContent = ref("");
 
-            article.value = response.data.data;
-        };
+const fetchArticle = async (id) => {
+    const response = await axios({
+        method: 'post',
+        url: 'detailarticle',
+        data: {
+            articleId: id
+        }
+    });
 
-        const fetchComments = async () => {
-            const response = await axios({
-                method: 'post',
-                url: 'showcomments',
-                data: {
-                    articlefatherId: 2,
-                    page: 1,
-                    pagesize: 20,
-                    is_fresh: 1
-                }
-            });
-
-            comments.value = response.data.data;
-        };
-
-        const submitComment = async () => {
-            await axios.post("/api/comment", {
-                content: newCommentContent.value,
-                articleId: props.id
-            });
-            newCommentContent.value = "";
-            await fetchComments();
-        };
-
-        onMounted(async () => {
-            await fetchArticle();
-            await fetchComments();
-        });
-
-        return { article, comments, newCommentContent, submitComment };
-    },
+    article.value = response.data.data;
 };
+
+const fetchComments = async (id) => {
+    const response = await axios({
+        method: 'post',
+        url: 'showcomments',
+        data: {
+            articlefatherId: id,
+            page: 1,
+            pagesize: 20,
+            is_fresh: 1
+        }
+    });
+    comments.value = response.data.data;
+    // console.log(comments.value);
+    articleComments.value = response.data.data.filter((comment: { is_parent_article: number; }) => comment.is_parent_article === 1);
+    // console.log(articleComments.value);
+    commenstReply.value = response.data.data.filter((comment: { is_parent_article: number; }) => comment.is_parent_article === 0);
+    // console.log(commenstReply.value);
+
+    // var father = articleComments.value;
+    // var son = commenstReply.value;
+    // father[1].son = [];
+    // console.log(father[1]);
+
+    // console.log(father[1].son);
+    // father[1].son.push(son[2]);
+
+    console.log(articleComments.value[1].son);
+    articleComments.value[1].reply = [];
+    console.log(articleComments.value[1].reply);
+    articleComments.value[1].reply.push(commenstReply.value[1]);
+    console.log(articleComments.value[1].reply);
+    console.log(articleComments.value[1]);
+
+    console.log(articleComments.value[0])
+    console.log(articleComments.value.length);
+
+    console.log(articleComments.value);
+
+    for (var i = 0; i < articleComments.value.length; i++) {
+        for (var j = 0; j < commenstReply.value.length; j++) {
+            // 如果文章评论的commentId === 评论回复的commentfatherId
+            // 就把这条commentReply设为articleComments的reply属性
+            if (articleComments.value[i].commentId === commenstReply.value[j].commentfatherId) {
+                articleComments.value[i].reply = [];
+                articleComments.value[i].reply.push(commenstReply.value[j]);
+
+                // console.log('reply: '+ commenstReply.value[j]);
+
+                // console.log('reply2: '+JSON.stringify(commenstReply.value[j]));
+                // console.log('comment ' + JSON.stringify(articleComments.value[i]));
+                // console.log('comment.reply: ' + JSON.stringify(articleComments.value[i].reply));
+
+            }
+            // console.log(commenstReply.value[j]);
+        }
+        // console.log(articleComments.value[i]);
+    }
+
+
+    console.log(articleComments.value);
+    console.log(articleComments.value[0]);
+
+    console.log(articleComments.value[0].reply)
+
+};
+
+
+const submitComment = async () => {
+    await axios.post("/api/comment", {
+        content: newCommentContent.value,
+        articleId: props.id
+    });
+    newCommentContent.value = "";
+    await fetchComments();
+};
+
+const clickReply = () => {
+    alert('clicked');
+};
+
+
+defineExpose({fetchArticle,fetchComments});
+
+// onMounted(async () => {
+//     await fetchArticle(2);
+//     await fetchComments(2);
+// });
+
+    //     return { 
+    //         article,
+    //         articleComments,
+    //         commenstReply, 
+    //         comments, 
+    //         newCommentContent, 
+    //         submitComment, 
+    //         clickReply
+    //     };
+    // },
 </script>
    
 <style scoped>
@@ -82,10 +177,31 @@ export default {
 .comment-input {
     margin-bottom: 20px;
 }
-.articleContainer{
-    width: 19%;
-    border:1px solid #ccc!important;
+
+.replyButton {
+    color: #79bbff;
+    font-weight: bold;
+    background-color: transparent;
+    border: none;
+}
+
+.reply {
+    text-indent: 2em;
+}
+
+
+.articleContainer {
+    /* width: 19%; */
+    border: 1px solid #ccc !important;
     border-radius: 20px;
     padding: 20px;
+}
+
+.articleText {
+    text-indent: 2em;
+}
+
+.article {
+    word-wrap: break-word;
 }
 </style>

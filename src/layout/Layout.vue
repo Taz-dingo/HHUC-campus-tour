@@ -15,7 +15,8 @@ var chooseName = ref();
 const scene = ref();
 const clickEven=(val: { content: string; })=>{
 //   console.log(val);
-//   console.log(val);
+//   console.log(val); 
+  // 加载
   scrollRef.value.load(val);
   chooseName.value=val;
   console.log('chooseName in Layout:'+chooseName.value);
@@ -37,6 +38,7 @@ const clickEven=(val: { content: string; })=>{
         </el-aside>
 
         <Scene ref="scene" @click-child="clickEven"></Scene>
+        
     </el-container>
 </template>
 
