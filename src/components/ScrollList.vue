@@ -7,7 +7,7 @@
         modal-class="modal" direction="ltr">
         <h1 class="drawer_title">{{ name }}</h1>
 
-        <div class="infinite-list" v-infinite-scroll="load" infinite-scroll-distance="10"
+        <div class="infinite-list" v-show="!isDetail" v-infinite-scroll="load" infinite-scroll-distance="10"
             :infinite-scroll-disabled="disabled" style="overflow: auto">
 
             <div class="postList">
@@ -15,10 +15,11 @@
                     <SinglePost @click-child="clickEven" :post="post" ref="postRef"></SinglePost>
                 </div>
             </div>
+        </div>
 
-            <div class="article" v-if="isDetail">
-                <ArticleDetail ref="articleRef"></ArticleDetail>
-            </div>
+        <div class="article" v-show="isDetail">
+            <ArticleDetail ref="articleRef"></ArticleDetail>
+            <button @click="goBack">返回</button>
         </div>
 
 
@@ -52,11 +53,21 @@ const articleRef = ref();
 // 文章概览点击事件 -> 详细文章
 const clickEven = (val: { content: string }) => {
     isDetail.value = true;
-    articleRef.value.fetchArticle(val);
-    articleRef.value.fetchComments(val);
-    postName.value = val;
-    console.log('postName in ScrollList: ' + postName.value);
+    try {
+
+        articleRef.value.fetchArticle(val);
+        articleRef.value.fetchComments(val);
+        postName.value = val;
+
+        console.log('postName in ScrollList: ' + postName.value);
+    } catch (e) {
+        console.log(e);
+    }
 };
+
+const goBack = () => {
+    isDetail.value = false;
+}
 
 const load = async () => {
     try {
@@ -76,7 +87,8 @@ const load = async () => {
                 data = response.data.data;
                 console.log(data);
             } else {
-                // posts.value=[];
+                // posts.value = [];
+                data = [];
             }
         });
         if (pageSize <= data.length) {  // 如果没有取完所有数据，pageSize+=2

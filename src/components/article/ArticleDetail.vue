@@ -20,8 +20,8 @@
         </div>
         <div class="commentArea">
             <h3>评论</h3>
-            <div v-infinite-scroll="fetchComments" infinite-scroll-distance="10" infinite-scroll-delay="200" class="infinite-list"
-                style="overflow: auto">
+            <div v-infinite-scroll="fetchComments" infinite-scroll-distance="10" infinite-scroll-delay="200"
+                class="infinite-list" style="overflow: auto">
                 <el-scrollbar>
                     <div class="comment" v-for="comment in articleComments" :key="comment.commentId">
                         <p class="commentText">{{ comment.content }}</p>
@@ -46,6 +46,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import { timeStamp } from "console";
 
 const id = ref();
 const article = ref({});
@@ -69,72 +70,50 @@ const fetchArticle = async (id) => {
 };
 
 const fetchComments = async (id) => {
-    const response = await axios({
-        method: 'post',
-        url: 'showcomments',
-        data: {
-            articlefatherId: id,
-            page: 1,
-            pagesize: 20,
-            is_fresh: 1
-        }
-    });
-    comments.value = response.data.data;
-    // console.log(comments.value);
-    if(comments.value){
-        articleComments.value = response.data.data.filter((comment: { is_parent_article: number; }) => comment.is_parent_article === 1);
-        // console.log(articleComments.value);
-        commenstReply.value = response.data.data.filter((comment: { is_parent_article: number; }) => comment.is_parent_article === 0);
-        // console.log(commenstReply.value);
-
-        // var father = articleComments.value;
-        // var son = commenstReply.value;
-        // father[1].son = [];
-        // console.log(father[1]);
-
-        // console.log(father[1].son);
-        // father[1].son.push(son[2]);
-
-        // console.log(articleComments.value[1].son);
-        // articleComments.value[1].reply = [];
-        // console.log(articleComments.value[1].reply);
-        // articleComments.value[1].reply.push(commenstReply.value[1]);
-        // console.log(articleComments.value[1].reply);
-        // console.log(articleComments.value[1]);
-
-        // console.log(articleComments.value[0])
-        // console.log(articleComments.value.length);
-
-        // console.log(articleComments.value);
-
-        for (var i = 0; i < articleComments.value.length; i++) {
-            for (var j = 0; j < commenstReply.value.length; j++) {
-                // 如果文章评论的commentId === 评论回复的commentfatherId
-                // 就把这条commentReply设为articleComments的reply属性
-                if (articleComments.value[i].commentId === commenstReply.value[j].commentfatherId) {
-                    articleComments.value[i].reply = [];
-                    articleComments.value[i].reply.push(commenstReply.value[j]);
-
-                    // console.log('reply: '+ commenstReply.value[j]);
-
-                    // console.log('reply2: '+JSON.stringify(commenstReply.value[j]));
-                    // console.log('comment ' + JSON.stringify(articleComments.value[i]));
-                    // console.log('comment.reply: ' + JSON.stringify(articleComments.value[i].reply));
-
-                }
-                // console.log(commenstReply.value[j]);
+    try {
+        await axios({
+            method: 'post',
+            url: 'showcomments',
+            data: {
+                articlefatherId: id,
+                page: 1,
+                pagesize: 20,
+                is_fresh: 1
             }
-            // console.log(articleComments.value[i]);
-        }
+        }).then(function (response) {
 
+            // articleComments.value = [];
+            // commenstReply.value = [];
+            if (response.data.data != null) {
 
-        console.log(articleComments.value);
-        console.log(articleComments.value[0]);
+                articleComments.value = response.data.data.filter((comment: { is_parent_article: number; }) => comment.is_parent_article === 1);
+                // console.log(articleComments.value);
+                commenstReply.value = response.data.data.filter((comment: { is_parent_article: number; }) => comment.is_parent_article === 0);
+                // console.log(commenstReply.value);
 
-        console.log(articleComments.value[0].reply)
-    }else{
-        console.log('comment.value is '+comments.value)
+                for (var i = 0; i < articleComments.value.length; i++) {
+                    for (var j = 0; j < commenstReply.value.length; j++) {
+                        // 如果文章评论的commentId === 评论回复的commentfatherId
+                        // 就把这条commentReply设为articleComments的reply属性
+                        if (articleComments.value[i].commentId === commenstReply.value[j].commentfatherId) {
+                            articleComments.value[i].reply = [];
+                            articleComments.value[i].reply.push(commenstReply.value[j]);
+                        }
+                    }
+                }
+
+                console.log('response.data.data is not null');
+            } else {
+                console.log('response.data.data is null');
+            }
+
+        });
+
+    } catch (e) {
+        console.log(e);
     }
+
+
 };
 
 
@@ -152,23 +131,8 @@ const clickReply = () => {
 };
 
 
-defineExpose({fetchArticle,fetchComments});
+defineExpose({ fetchArticle, fetchComments });
 
-// onMounted(async () => {
-//     await fetchArticle(2);
-//     await fetchComments(2);
-// });
-
-    //     return { 
-    //         article,
-    //         articleComments,
-    //         commenstReply, 
-    //         comments, 
-    //         newCommentContent, 
-    //         submitComment, 
-    //         clickReply
-    //     };
-    // },
 </script>
    
 <style scoped>

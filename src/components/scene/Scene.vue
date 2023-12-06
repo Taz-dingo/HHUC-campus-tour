@@ -11,7 +11,9 @@
                         </el-icon>
                     </div>
 
-                    <BDInfo :name="chooseObjName" :intro="'学校中最亮眼的当属图书馆，其以方中带圆、中正大气的形态立于校园中央。图书馆流动起伏的水波纹外形，象征河海大学缘水而生、因水而为、顺水而长的办学特色。然而别致的造型，也让施工难度倍增。'"></BDInfo>
+                    <BDInfo :name="chooseObjName"
+                        :intro="'学校中最亮眼的当属图书馆，其以方中带圆、中正大气的形态立于校园中央。图书馆流动起伏的水波纹外形，象征河海大学缘水而生、因水而为、顺水而长的办学特色。然而别致的造型，也让施工难度倍增。'">
+                    </BDInfo>
                     <!-- <ScrollList></ScrollList> -->
                     <!-- <PostList :posts="posts"></PostList> -->
                 </div>
@@ -259,25 +261,25 @@ const mesh5 = new THREE.Mesh(new THREE.BoxGeometry(65, 26, 65), material);   // 
 mesh0.name = 'library';
 mesh0.position.set(-5, 26, -1);
 mesh1.name = 'A';
-mesh1.position.set(56,20,-144);
+mesh1.position.set(56, 20, -144);
 mesh2.name = 'B';
-mesh2.position.set(-65,20,-144);
+mesh2.position.set(-65, 20, -144);
 mesh3.name = 'C';
-mesh3.position.set(-147,20,-61);
+mesh3.position.set(-147, 20, -61);
 mesh4.name = 'D';
-mesh4.position.set(-149,20,59);
+mesh4.position.set(-149, 20, 59);
 mesh5.name = 'E';
-mesh5.position.set(-111,10,110);
+mesh5.position.set(-111, 10, 110);
 
 
 generateGeometry();
 
 // 添加到场景中
-scene.add(mesh);  
-scene.add(mesh0); 
-scene.add(mesh1); 
-scene.add(mesh2); 
-scene.add(mesh3); 
+scene.add(mesh);
+scene.add(mesh0);
+scene.add(mesh1);
+scene.add(mesh2);
+scene.add(mesh3);
 scene.add(mesh4);
 scene.add(mesh5);
 
@@ -296,15 +298,6 @@ const renderPass = new RenderPass(scene, camera);
 // 设置renderPass通道
 composer.addPass(renderPass);
 
-// 创建OutlinePass通道
-// v2的尺寸和canvas画布保持
-// const v2 = new THREE.Vector2(window.innerWidth, window.innerHeight);
-// const outlinePass = new OutlinePass(v2, scene, camera);
-// outlinePass.selectedObjects = [mesh1];
-// outlinePass.visibleEdgeColor.set(0x00ffff);
-// outlinePass.edgeThickness = 4;
-// outlinePass.edgeStrength = 6;
-// composer.addPass(outlinePass);
 
 // onresize 事件会在窗口被调整大小时发生
 window.onresize = function () {
@@ -398,7 +391,7 @@ const clickChild = renderer.domElement.addEventListener('click', function (event
 
         // chooseObj.add(desc3DObj);
         descObj.position.set(60, 0, -50);
-        descObj.scale.set(10,10,10);
+        descObj.scale.set(10, 10, 10);
         // scene.add(descObj);
     } else if (intersects.length == 0) {
         // posts.value=[];
