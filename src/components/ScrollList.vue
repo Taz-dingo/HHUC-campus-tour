@@ -6,19 +6,19 @@
     <el-drawer v-model="drawer" title="I'm outer Drawer" size="20%" :modal="false" :close-on-click-modal="false"
         modal-class="modal" direction="ltr">
         <h1 class="drawer_title">{{ name }}</h1>
-        <div v-infinite-scroll="load" infinite-scroll-distance="10" infinite-scroll-delay="200" class="infinite-list"
-            style="overflow: auto">
-            <el-scrollbar>
-                <div class="postList">
-                    <div v-for="post in posts" :key="posts.articleId">
-                        <SinglePost @click-child="clickEven" :post="post" ref="postRef"></SinglePost>
-                    </div>
-                </div>
 
-                <div class="article">
-                    <ArticleDetail ref="articleRef"></ArticleDetail>
+        <div class="infinite-list" v-infinite-scroll="load" infinite-scroll-distance="10"
+            :infinite-scroll-disabled="disabled" style="overflow: auto">
+
+            <div class="postList">
+                <div v-for="post in posts" :key="posts.articleId">
+                    <SinglePost @click-child="clickEven" :post="post" ref="postRef"></SinglePost>
                 </div>
-            </el-scrollbar>
+            </div>
+
+            <!-- <div class="article">
+                    <ArticleDetail ref="articleRef"></ArticleDetail>
+                </div> -->
         </div>
 
 
@@ -27,17 +27,20 @@
   
 <script lang="ts" setup>
 import axios from 'axios';
-import { inject, ref, toRefs } from 'vue'
+import { computed, inject, ref, toRefs } from 'vue'
 import SinglePost from './SinglePost.vue';
 import ArticleDetail from '@/components/article/ArticleDetail.vue';
 const posts = ref(Array);
 const drawer = ref(false);
 const innerDrawer = ref(false);
+const loading = ref(false);
+const disabled = computed(() => loading.value);
+
 defineProps({
     name: String
 });
 // const name:any = inject('chooseName');
-var pageSize = 18;
+var pageSize = 10;
 // console.log('name in ScrollList:' + name.value);
 
 var isDetail = false;
@@ -45,8 +48,9 @@ var isDetail = false;
 var postName = ref();
 const postRef = ref();
 const articleRef = ref();
+// 文章概览点击事件 -> 详细文章
 const clickEven = (val: { content: string }) => {
-    isDetail=true;
+    isDetail = true;
     articleRef.value.fetchArticle(val);
     articleRef.value.fetchComments(val);
     postName.value = val;
@@ -55,13 +59,13 @@ const clickEven = (val: { content: string }) => {
 
 const load = async (name: string) => {
     try {
-
+        loading.value = true;
         let data: any;
         await axios({
             method: 'post',
             url: '/areaarticle',
             data: {
-                areaId: name,
+                areaId: 'a',
                 page: 1,
                 pagesize: pageSize
             }
@@ -80,6 +84,8 @@ const load = async (name: string) => {
 
         console.log(pageSize);
         posts.value = data;
+
+        loading.value = false;
     } catch (error) {
         console.log(error);
     }
