@@ -16,9 +16,9 @@
                 </div>
             </div>
 
-            <!-- <div class="article">
-                    <ArticleDetail ref="articleRef"></ArticleDetail>
-                </div> -->
+            <div class="article" v-if="isDetail">
+                <ArticleDetail ref="articleRef"></ArticleDetail>
+            </div>
         </div>
 
 
@@ -36,28 +36,29 @@ const innerDrawer = ref(false);
 const loading = ref(false);
 const disabled = computed(() => loading.value);
 
-defineProps({
+
+const props = defineProps({
     name: String
 });
-// const name:any = inject('chooseName');
+
+
 var pageSize = 10;
 // console.log('name in ScrollList:' + name.value);
-
-var isDetail = false;
+const isDetail = ref(false);
 
 var postName = ref();
 const postRef = ref();
 const articleRef = ref();
 // 文章概览点击事件 -> 详细文章
 const clickEven = (val: { content: string }) => {
-    isDetail = true;
+    isDetail.value = true;
     articleRef.value.fetchArticle(val);
     articleRef.value.fetchComments(val);
     postName.value = val;
     console.log('postName in ScrollList: ' + postName.value);
 };
 
-const load = async (name: string) => {
+const load = async () => {
     try {
         loading.value = true;
         let data: any;
@@ -65,7 +66,7 @@ const load = async (name: string) => {
             method: 'post',
             url: '/areaarticle',
             data: {
-                areaId: 'a',
+                areaId: props.name,
                 page: 1,
                 pagesize: pageSize
             }

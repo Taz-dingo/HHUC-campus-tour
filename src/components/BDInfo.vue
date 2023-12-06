@@ -5,13 +5,13 @@
         </h3>
         <div class="block">
             <h3 class="demonstration">图书馆</h3>
-            
+
             <el-carousel height="300px">
                 <el-carousel-item v-for="item in 4" :key="item">
-                    <img v-if="item==1" style="height: 100%;" src="../../public/static/img/library/1.jpg">
-                    <img v-if="item==2" style="height: 100%;" src="../../public/static/img/library/2.jpg">
-                    <img v-if="item==3" style="height: 100%;" src="../../public/static/img/library/3.jpg">
-                    <img v-if="item==4" style="height: 100%;" src="../../public/static/img/library/4.jpg">
+                    <img v-if="item == 1" style="height: 100%;" src="/static/img/library/1.jpg">
+                    <img v-if="item == 2" style="height: 100%;" src="/public/static/img/library/2.jpg">
+                    <img v-if="item == 3" style="height: 100%;" src="/public/static/img/library/3.jpg">
+                    <img v-if="item == 4" style="height: 100%;" src="/public/static/img/library/4.jpg">
                 </el-carousel-item>
             </el-carousel>
         </div>
@@ -32,10 +32,11 @@ const props = defineProps({
 
 
 <style>
-.demonstration{
+.demonstration {
     text-align: center;
 }
- .BDInfoContainer {
+
+.BDInfoContainer {
     width: 350px;
 }
 

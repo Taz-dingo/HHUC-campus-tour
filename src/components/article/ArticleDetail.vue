@@ -81,57 +81,60 @@ const fetchComments = async (id) => {
     });
     comments.value = response.data.data;
     // console.log(comments.value);
-    articleComments.value = response.data.data.filter((comment: { is_parent_article: number; }) => comment.is_parent_article === 1);
-    // console.log(articleComments.value);
-    commenstReply.value = response.data.data.filter((comment: { is_parent_article: number; }) => comment.is_parent_article === 0);
-    // console.log(commenstReply.value);
+    if(comments.value){
+        articleComments.value = response.data.data.filter((comment: { is_parent_article: number; }) => comment.is_parent_article === 1);
+        // console.log(articleComments.value);
+        commenstReply.value = response.data.data.filter((comment: { is_parent_article: number; }) => comment.is_parent_article === 0);
+        // console.log(commenstReply.value);
 
-    // var father = articleComments.value;
-    // var son = commenstReply.value;
-    // father[1].son = [];
-    // console.log(father[1]);
+        // var father = articleComments.value;
+        // var son = commenstReply.value;
+        // father[1].son = [];
+        // console.log(father[1]);
 
-    // console.log(father[1].son);
-    // father[1].son.push(son[2]);
+        // console.log(father[1].son);
+        // father[1].son.push(son[2]);
 
-    console.log(articleComments.value[1].son);
-    articleComments.value[1].reply = [];
-    console.log(articleComments.value[1].reply);
-    articleComments.value[1].reply.push(commenstReply.value[1]);
-    console.log(articleComments.value[1].reply);
-    console.log(articleComments.value[1]);
+        // console.log(articleComments.value[1].son);
+        // articleComments.value[1].reply = [];
+        // console.log(articleComments.value[1].reply);
+        // articleComments.value[1].reply.push(commenstReply.value[1]);
+        // console.log(articleComments.value[1].reply);
+        // console.log(articleComments.value[1]);
 
-    console.log(articleComments.value[0])
-    console.log(articleComments.value.length);
+        // console.log(articleComments.value[0])
+        // console.log(articleComments.value.length);
 
-    console.log(articleComments.value);
+        // console.log(articleComments.value);
 
-    for (var i = 0; i < articleComments.value.length; i++) {
-        for (var j = 0; j < commenstReply.value.length; j++) {
-            // 如果文章评论的commentId === 评论回复的commentfatherId
-            // 就把这条commentReply设为articleComments的reply属性
-            if (articleComments.value[i].commentId === commenstReply.value[j].commentfatherId) {
-                articleComments.value[i].reply = [];
-                articleComments.value[i].reply.push(commenstReply.value[j]);
+        for (var i = 0; i < articleComments.value.length; i++) {
+            for (var j = 0; j < commenstReply.value.length; j++) {
+                // 如果文章评论的commentId === 评论回复的commentfatherId
+                // 就把这条commentReply设为articleComments的reply属性
+                if (articleComments.value[i].commentId === commenstReply.value[j].commentfatherId) {
+                    articleComments.value[i].reply = [];
+                    articleComments.value[i].reply.push(commenstReply.value[j]);
 
-                // console.log('reply: '+ commenstReply.value[j]);
+                    // console.log('reply: '+ commenstReply.value[j]);
 
-                // console.log('reply2: '+JSON.stringify(commenstReply.value[j]));
-                // console.log('comment ' + JSON.stringify(articleComments.value[i]));
-                // console.log('comment.reply: ' + JSON.stringify(articleComments.value[i].reply));
+                    // console.log('reply2: '+JSON.stringify(commenstReply.value[j]));
+                    // console.log('comment ' + JSON.stringify(articleComments.value[i]));
+                    // console.log('comment.reply: ' + JSON.stringify(articleComments.value[i].reply));
 
+                }
+                // console.log(commenstReply.value[j]);
             }
-            // console.log(commenstReply.value[j]);
+            // console.log(articleComments.value[i]);
         }
-        // console.log(articleComments.value[i]);
+
+
+        console.log(articleComments.value);
+        console.log(articleComments.value[0]);
+
+        console.log(articleComments.value[0].reply)
+    }else{
+        console.log('comment.value is '+comments.value)
     }
-
-
-    console.log(articleComments.value);
-    console.log(articleComments.value[0]);
-
-    console.log(articleComments.value[0].reply)
-
 };
 
 
