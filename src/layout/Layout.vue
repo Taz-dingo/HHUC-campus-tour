@@ -17,8 +17,9 @@ const clickEven = (val: { content: string; }) => {
     //   console.log(val);
     //   console.log(val); 
     // 加载
-    scrollRef.value.load(val);
+
     chooseName.value = val;
+    scrollRef.value.load(val);
     console.log('chooseName in Layout:' + chooseName.value);
 }
 

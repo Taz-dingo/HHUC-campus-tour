@@ -400,10 +400,6 @@ const clickChild = renderer.domElement.addEventListener('click', function (event
 })
 
 
-
-
-
-
 // const posts:Array<any> = [];
 
 onMounted(() => {
