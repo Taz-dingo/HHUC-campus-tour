@@ -19,7 +19,7 @@
 
         <div class="article" v-show="isDetail">
             <ArticleDetail ref="articleRef"></ArticleDetail>
-            <button @click="goBack">返回</button>
+            <button @click="goBack">返回</button>+
         </div>
 
 
@@ -31,6 +31,7 @@ import axios from 'axios';
 import { computed, inject, ref, toRefs } from 'vue'
 import SinglePost from './SinglePost.vue';
 import ArticleDetail from '@/components/article/ArticleDetail.vue';
+
 const posts = ref(Array);
 const drawer = ref(false);
 const innerDrawer = ref(false);

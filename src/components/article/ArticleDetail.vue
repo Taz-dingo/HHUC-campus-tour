@@ -46,7 +46,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import axios from "axios";
-import { timeStamp } from "console";
+import { getDetailArticle } from "@/api/article"
+import { getArticleComment } from "@/api/article"
 
 const id = ref();
 const article = ref({});
@@ -57,64 +58,102 @@ const articleComments = ref([]);
 const commenstReply = ref([]);
 const newCommentContent = ref("");
 
-const fetchArticle = async (id) => {
-    const response = await axios({
-        method: 'post',
-        url: 'detailarticle',
-        data: {
-            articleId: id
-        }
+// const fetchArticle = async (id) => {
+//     const response = await axios({
+//         method: 'post',
+//         url: 'detailarticle',
+//         data: {
+//             articleId: id
+//         }
+//     });
+
+//     article.value = response.data.data;
+// };
+
+const fetchArticle = (id: any) => {
+    getDetailArticle({
+        articleId: id
+    }).then((response) => {
+        article.value = response.data.data;
     });
+}
 
-    article.value = response.data.data;
-};
+const fetchComments = (id: any) => {
+    getArticleComment({
+        articlefatherId: id,
+        page: 1,
+        pagesize: 20,
+        is_fresh: 1
+    }).then((response) => {
+        if (response.data.data != null) {
+            articleComments.value = response.data.data.filter((comment: { is_parent_article: number; }) => comment.is_parent_article === 1);
+            // console.log(articleComments.value);
+            commenstReply.value = response.data.data.filter((comment: { is_parent_article: number; }) => comment.is_parent_article === 0);
+            // console.log(commenstReply.value);
 
-const fetchComments = async (id) => {
-    try {
-        await axios({
-            method: 'post',
-            url: 'showcomments',
-            data: {
-                articlefatherId: id,
-                page: 1,
-                pagesize: 20,
-                is_fresh: 1
-            }
-        }).then(function (response) {
-
-            // articleComments.value = [];
-            // commenstReply.value = [];
-            if (response.data.data != null) {
-
-                articleComments.value = response.data.data.filter((comment: { is_parent_article: number; }) => comment.is_parent_article === 1);
-                // console.log(articleComments.value);
-                commenstReply.value = response.data.data.filter((comment: { is_parent_article: number; }) => comment.is_parent_article === 0);
-                // console.log(commenstReply.value);
-
-                for (var i = 0; i < articleComments.value.length; i++) {
-                    for (var j = 0; j < commenstReply.value.length; j++) {
-                        // 如果文章评论的commentId === 评论回复的commentfatherId
-                        // 就把这条commentReply设为articleComments的reply属性
-                        if (articleComments.value[i].commentId === commenstReply.value[j].commentfatherId) {
-                            articleComments.value[i].reply = [];
-                            articleComments.value[i].reply.push(commenstReply.value[j]);
-                        }
+            for (var i = 0; i < articleComments.value.length; i++) {
+                for (var j = 0; j < commenstReply.value.length; j++) {
+                    // 如果文章评论的commentId === 评论回复的commentfatherId
+                    // 就把这条commentReply设为articleComments的reply属性
+                    if (articleComments.value[i].commentId === commenstReply.value[j].commentfatherId) {
+                        articleComments.value[i].reply = [];
+                        articleComments.value[i].reply.push(commenstReply.value[j]);
                     }
                 }
-
-                console.log('response.data.data is not null');
-            } else {
-                console.log('response.data.data is null');
             }
 
-        });
+            console.log('testestestest');
+        } else {
+            articleComments.value = [];
+            commenstReply.value = [];
 
-    } catch (e) {
-        console.log(e);
-    }
+        }
+    });
+}
 
+// const fetchComments = async (id: undefined) => {
+//     try {
+//         await axios({
+//             method: 'post',
+//             url: 'showcomments',
+//             data: {
+//                 articlefatherId: id,
+//                 page: 1,
+//                 pagesize: 20,
+//                 is_fresh: 1
+//             }
+//         }).then(function (response) {
 
-};
+//             // articleComments.value = [];
+//             // commenstReply.value = [];
+//             if (response.data.data != null) {
+
+//                 articleComments.value = response.data.data.filter((comment: { is_parent_article: number; }) => comment.is_parent_article === 1);
+//                 // console.log(articleComments.value);
+//                 commenstReply.value = response.data.data.filter((comment: { is_parent_article: number; }) => comment.is_parent_article === 0);
+//                 // console.log(commenstReply.value);
+//                 // console.log('response.data.data is not null');
+//             } else {
+//                 // console.log('response.data.data is null');
+//             }
+//         });
+
+//         for (var i = 0; i < articleComments.value.length; i++) {
+//             for (var j = 0; j < commenstReply.value.length; j++) {
+//                 // 如果文章评论的commentId === 评论回复的commentfatherId
+//                 // 就把这条commentReply设为articleComments的reply属性
+//                 if (articleComments.value[i].commentId === commenstReply.value[j].commentfatherId) {
+//                     articleComments.value[i].reply = [];
+//                     articleComments.value[i].reply.push(commenstReply.value[j]);
+//                 }
+//             }
+//         }
+//         console.log('testestestest');
+
+//     } catch (e) {
+//         console.log(e);
+//     }
+// };
 
 
 const submitComment = async () => {
