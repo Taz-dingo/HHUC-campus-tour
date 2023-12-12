@@ -28,7 +28,7 @@
 <script lang="ts" setup>
 // 引入three.js
 import * as THREE from 'three';
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 // 引入扩展库OrbitControls.js
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -61,6 +61,10 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import axios from 'axios';
 import { stat } from 'fs';
 import type ScrollListVue from '../ScrollList.vue';
+import { useStore } from 'vuex'
+
+const store = useStore();
+
 
 const containerRef = ref();
 const descRef = ref();
@@ -380,6 +384,10 @@ const clickChild = renderer.domElement.addEventListener('click', function (event
     console.log(intersects);
     if (intersects.length > 0) {
         chooseObj = intersects[0].object;
+
+        // 更新objName
+        store.dispatch('scene/updateObjName', chooseObj.name);
+
         chooseObjName = chooseObj.name;
         // 向父组件传值
         emit('clickChild', chooseObjName);

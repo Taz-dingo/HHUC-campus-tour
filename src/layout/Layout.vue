@@ -11,15 +11,14 @@ const scrollRef = ref();
 const drawerRef = ref();
 
 var chooseName = ref();
-
 const scene = ref();
 const clickEven = (val: { content: string; }) => {
     //   console.log(val);
     //   console.log(val); 
     // 加载
-
     chooseName.value = val;
     scrollRef.value.load(val);
+
     console.log('chooseName in Layout:' + chooseName.value);
 }
 
@@ -27,11 +26,13 @@ const clickEven = (val: { content: string; }) => {
 
 <template>
     <el-container>
-        <el-header></el-header>
+        <el-header>
+
+        </el-header>
 
         <el-aside>
 
-            <ScrollList :name="chooseName" class="scroll" ref="scrollRef"></ScrollList>
+            <ScrollList class="scroll" ref="scrollRef"></ScrollList>
             <!-- <Drawer ref="drawerRef">
             </Drawer> -->
 
