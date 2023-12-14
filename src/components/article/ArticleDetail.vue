@@ -1,33 +1,66 @@
 <template>
-    <div class="articleContainer">
+    <div class="article-container">
         <div class="article">
 
-            <div>
-                <h1>{{ article.title }}</h1>
-                <p class="articleText">{{ article.content }}</p>
+            <div class="article_container">
+                <!-- <div class="info_container">
+                    <el-avatar :size=50 />
+                    <p>{{ article.creatorName }}</p>
+                </div> -->
+                <div>
+                    <h1>{{ article.title }}</h1>
+                    <p class="article-text">{{ article.content }}</p>
+                </div>
             </div>
 
-            <el-descriptions>
-                <div clas="footer">
-                    <el-descriptions-item label="">kooriookami</el-descriptions-item>
-                    <el-descriptions-item label="">
-                        <el-tag size="small">School</el-tag>
+            <el-descriptions column="3">
+                <div>
+                    <el-descriptions-item>
+                        <div
+                            style="display: grid;grid-template-columns: 1fr 1fr;align-items: center;justify-content: center;">
+                            <el-avatar :size="avatarSizes[0]" />
+                            {{ article.creatorName }}
+                        </div>
                     </el-descriptions-item>
-                    <el-descriptions-item label="">1900-01-01 </el-descriptions-item>
+                    <el-descriptions-item label="">
+                        <el-tag size="small">
+                            {{ article.tagOne }}
+                        </el-tag>
+                    </el-descriptions-item>
+                    <el-descriptions-item label="">
+                        {{ article.createTime }}
+                    </el-descriptions-item>
                 </div>
             </el-descriptions>
-
         </div>
-        <div class="commentArea">
+
+        <div class="comment_area">
             <h3>评论</h3>
             <div v-infinite-scroll="fetchComments" infinite-scroll-distance="10" infinite-scroll-delay="200"
                 class="infinite-list" style="overflow: auto">
                 <el-scrollbar>
-                    <div class="comment" v-for="comment in comments" :key="comment.commentId">
-                        <p class="commentText">{{ comment.content }}</p>
-                        <button class="replyButton" @click="clickReply">回复</button>
-                        <div class="reply" v-for="reply in comment.reply" :key="reply.commentId">
-                            <p class="replyText">{{ reply.content }}</p>
+                    <div class="comments" v-for="comment in comments" :key="comment.commentId">
+                        <div class="comment_container">
+                            <el-avatar :size="avatarSizes[1]" />
+                            <div>
+                                <p class="comment_user_name" style="align-content: start;justify-content: start;">
+                                    {{ comment.creatorName }}
+                                </p>
+                                <p class="comment_text" style="align-content: start;justify-content: start;">
+                                    {{ comment.content }}
+                                </p>
+                            </div>
+                        </div>
+                        <button class="reply_button" @click="clickReply">
+                            回复
+                        </button>
+
+                        <div class="reply_container" v-for="reply in comment.reply" :key="reply.commentId">
+                            <el-avatar :size="avatarSizes[2]" />
+                            <div>
+                                <p class="reply_user_name">{{ reply.creatorName }}</p>
+                                <p class="reply_text">{{ reply.content }}</p>
+                            </div>
                         </div>
                     </div>
                 </el-scrollbar>
@@ -50,14 +83,17 @@ import { getDetailArticle } from "@/api/article"
 import { getArticleComment } from "@/api/article"
 import { useStore } from 'vuex'
 
+const avatarSizes: Array<number> = [50, 40, 35];  // 分别是文章、回复、评论里的头像size
+
+
 const store = useStore();
 const comments = computed(() => {
     return store.getters['article/getComments']
 })
 
-
-const id = ref();
-const article = ref({});
+const article = computed(() => {
+    return store.getters['article/getArticle'];
+})
 
 // 文章评论
 const articleComments = ref([]);
@@ -80,7 +116,7 @@ const fetchArticle = async (id: any) => {
     await getDetailArticle({
         articleId: id
     }).then((response) => {
-        article.value = response.data.data;
+        store.dispatch('article/updateArticle', response.data.data);
     });
 }
 
@@ -142,8 +178,15 @@ defineExpose({ fetchArticle, fetchComments });
 
 </script>
    
-<style scoped>
-.comment {
+<style >
+.comment_container {
+    display: grid;
+    grid-template-columns: 50px auto;
+    align-items: center;
+    word-wrap: break-word;
+}
+
+.comments {
     border-bottom: 1px solid #eee;
     padding: 10px 0;
 }
@@ -152,26 +195,31 @@ defineExpose({ fetchArticle, fetchComments });
     margin-bottom: 20px;
 }
 
-.replyButton {
+.reply_button {
     color: #79bbff;
     font-weight: bold;
     background-color: transparent;
     border: none;
 }
 
-.reply {
-    text-indent: 2em;
+.reply_container {
+    display: grid;
+    grid-template-columns: 45px auto;
+    align-items: center;
+    word-wrap: break-word;
+
+    /* 缩进 */
+    margin-left: 30px;
 }
 
-
-.articleContainer {
+.article-container {
     /* width: 19%; */
     border: 1px solid #ccc !important;
     border-radius: 20px;
     padding: 20px;
 }
 
-.articleText {
+.article-text {
     text-indent: 2em;
 }
 

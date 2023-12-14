@@ -3,33 +3,33 @@
         >
     </el-button>
 
-    <el-drawer v-model="drawer" title="I'm outer Drawer" size="20%" :modal="false" :close-on-click-modal="false"
+    <el-drawer v-model="drawer" title="I'm outer Drawer" size="25%" :modal="false" :close-on-click-modal="false"
         modal-class="modal" direction="ltr">
+
         <!-- 如果选中了建筑 -->
         <div class="main_container" v-if="objName !== '' && !isDetail">
             <h1 class="drawer_title">{{ objName }}</h1>
-            <div class="infinite-list" v-show="!isDetail" v-infinite-scroll="load" infinite-scroll-distance="10"
-                :infinite-scroll-disabled="disabled" style="overflow: auto">
+            <div class="infinite-list" v-show="!isDetail" v-infinite-scroll="load" infinite-scroll-distance="30"
+                :infinite-scroll-disabled="disabled" infinite-scroll-immediate="false" style="overflow: auto">
 
                 <div class="post_list">
                     <div v-for="post in posts" :key="posts.articleId">
-                        <SinglePost @click-child="clickEven" :post="post" ref="postRef"></SinglePost>
+                        <SinglePost @click-child="clickEven" :post="post"></SinglePost>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- 如果没有选中建筑 -->
-        <div v-if="objName === ''">
+        <div v-if="objName === '' && !isDetail">
             <P>没有啦</P>
         </div>
 
-
+        <!-- 如果选中了文章 -->
         <div class="article" v-show="isDetail">
             <ArticleDetail ref="articleRef"></ArticleDetail>
-            <button @click="goBack">返回</button>+
+            <button @click="goBack">返回</button>
         </div>
-
 
     </el-drawer>
 </template>
@@ -59,20 +59,14 @@ const DEFAULT_PAGE_SIZE = 10;
 var pageSize = DEFAULT_PAGE_SIZE;
 // console.log('name in ScrollList:' + name.value);
 const isDetail = ref(false);
-var postName = ref();
-const postRef = ref();
 const articleRef = ref();
 
 // 文章概览点击事件 -> 详细文章
 const clickEven = (val: { content: string }) => {
     isDetail.value = true;
     try {
-
         articleRef.value.fetchArticle(val);
         articleRef.value.fetchComments(val);
-        postName.value = val;
-
-        console.log('postName in ScrollList: ' + postName.value);
     } catch (e) {
         console.log(e);
     }
@@ -147,7 +141,7 @@ watch(
 }
 
 .infinite-list {
-    width: 400px;
+    width: auto;
     height: 95%;
     padding: 0;
     margin: 0;

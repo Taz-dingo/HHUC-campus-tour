@@ -2,10 +2,10 @@
   <div class="post">
     <h3 @click="clickChild">{{ post?.title }}</h3>
     <p>{{ post?.summary }}</p>
+
     <div class="footer">
       <span>{{ post?.creatorName }}</span>
       <span class="tag">{{ post?.tagOne }}</span>
-      
       <div>
         <el-icon>
           <Clock />
@@ -17,10 +17,11 @@
 </template>
 
 <script lang="ts" setup>
+
 const emit = defineEmits(['clickChild']);
 
-const clickChild = () =>{
-  emit('clickChild',props.post?.articleId);
+const clickChild = () => {
+  emit('clickChild', props.post?.articleId);
   console.log(props.post?.articleId);
 }
 
@@ -35,6 +36,7 @@ const props = defineProps({
 <style>
 .footer {
   display: flex;
+  align-content: space-between;
 }
 
 .footer>div {
@@ -55,4 +57,5 @@ const props = defineProps({
   color: black;
   margin-bottom: 10px;
   max-width: 400px;
-}</style>
+}
+</style>
