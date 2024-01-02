@@ -1,97 +1,47 @@
-import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
-import { resetRouter } from '@/router'
+const user = {
+    namespaced: true,
 
-const getDefaultState = () => {
-  return {
-    token: getToken(),
-    name: '',
-    avatar: ''
-  }
-}
-
-const state = getDefaultState()
-
-const mutations = {
-  RESET_STATE: (state) => {
-    Object.assign(state, getDefaultState())
-  },
-  SET_TOKEN: (state, token) => {
-    state.token = token
-  },
-  SET_NAME: (state, name) => {
-    state.name = name
-  },
-  SET_AVATAR: (state, avatar) => {
-    state.avatar = avatar
-  }
-}
-
-const actions = {
-  // user login
-  login({ commit }, userInfo) {
-    const { username, password } = userInfo
-    return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
-  },
-
-  // get user info
-  getInfo({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
-
-        if (!data) {
-          return reject('Verification failed, please Login again.')
+    state: () => ({
+        login:false,    // 是否登录
+        userInfo:"13141",  // 用户信息
+        userToken:'',   // 用户登录token
+    }),
+    
+    getters:{
+        getLogin(state){
+            return state.login;
+        },
+        getUserInfo(state){
+            return state.userInfo;
+        },
+        getUserToken(state){
+            return state.userToken;
         }
+    },
 
-        const { name, avatar } = data
+    mutations:{
+        setLogin(state,login){
+            state.login = login;
+        },
+        setUserInfo(state,userInfo){
+            state.userInfo = userInfo;
+        },
+        setUserToken(state,userToken){
+            state.userToken = userToken;
+        }
+    },
 
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        resolve(data)
-      }).catch(error => {
-        reject(error)
-      })
-    })
-  },
-
-  // user logout
-  logout({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
-        removeToken() // must remove  token  first
-        resetRouter()
-        commit('RESET_STATE')
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
-  },
-
-  // remove token
-  resetToken({ commit }) {
-    return new Promise(resolve => {
-      removeToken() // must remove  token  first
-      commit('RESET_STATE')
-      resolve()
-    })
-  }
+    actions:{
+        updateLogin({commit},login){
+            commit('setLogin', login);
+        },
+        updateUserInfo({commit},userInfo){
+            commit('setUserInfo',userInfo);
+        },
+        updateUserToken({commit},userToken){
+            commit('setUserToken',userToken);
+        },
+    }
 }
 
-export default {
-  namespaced: true,
-  state,
-  mutations,
-  actions
-}
-
+export default user;

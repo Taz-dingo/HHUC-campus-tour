@@ -14,10 +14,11 @@ let request = axios.create({
 
 // 请求拦截器 （前端-->后端）
 request.interceptors.request.use((config) => {
-    //token，密钥得设置
+    //token，密钥的设置
     let whiteList = webConfig.whiteListApi
     let url = config.url
     let token = localStorage.getItem("token");
+    // url不在whiteList中且有token
     if (whiteList.indexOf(url) === -1 && token) {
         config.headers.token = token;
     }

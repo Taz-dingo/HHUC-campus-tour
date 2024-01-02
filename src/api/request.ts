@@ -25,9 +25,9 @@ let myRequest = (function () {
                 return res
             })
         }
-
     }
-})()
+})();
+
 export {
     myRequest as request,
     request as initRequest

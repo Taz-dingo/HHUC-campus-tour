@@ -1,24 +1,22 @@
 import { initRequest } from "./request"
-
-export function login(data) {
-  return request({
-    url: '/login',
-    method: 'post',
-    data: data
+export const login = (data: object) => {
+  return initRequest({
+    url:"/load",
+    method:"post",
+    data:{
+      ...data
+    }
   })
 }
 
-export function getInfo(token) {
-  return request({
-    url: '//info',
-    method: 'get',
-    params: { token }
+export const signUp = (data: JSON) => {
+  return initRequest({
+    url:"/signup",
+    method:"post",
+    data:{
+      ...data
+    }
   })
 }
 
-export function logout() {
-  return request({
-    url: '/logout',
-    method: 'post'
-  })
-}
+

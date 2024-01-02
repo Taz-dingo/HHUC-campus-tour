@@ -1,12 +1,12 @@
 const scene = {
     namespaced: true,
+
     state: () => ({
         objName: '',
-
     }),
     // 理解为过滤器、计算属性
     getters: {
-        getObjName(state) {
+        getObjName(state: object) {
             return state.objName
         }
     },

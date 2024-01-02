@@ -28,8 +28,11 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
-import axios from 'axios';
+import { login, signUp } from '@/api/user'
 import router from '@/router';
+import { useStore } from 'vuex';
+
+const store = useStore();
 
 const ruleFormRef = ref<FormInstance>();
 
@@ -79,18 +82,22 @@ const submitForm = (formEl: FormInstance | undefined) => {
             try {
                 console.log('submit!')
                 console.log(ruleForm.uname);
-                const response = await axios({
-                    method: 'post',
-                    url: '/load',
-                    data: {
-                        userId: ruleForm.uname,
-                        userPassword: ruleForm.pass,
-                    }
+                await login({
+                    userId: ruleForm.uname,
+                    userPassword: ruleForm.pass,
                 }).then(function (response) {
+                    console.log(response.headers);
+                    console.log(response.headers['authorization']);
                     console.log(response.data.success);
+
                     //  如果登录成功
                     if (response.data.success) {
                         alert('登录成功！');
+                        // login信息为true，更新token
+                        store.dispatch('user/updateLogin', true);
+                        store.dispatch('user/updateUserToken', response.headers['authorization']);
+                        localStorage.token = store.getters['user/getUserToken'];
+                        // 跳转到'/'
                         router.push('/');
                     }
                     else {  // 用户名正确密码错误
@@ -104,6 +111,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
                     // 账号错误
                     alert('账号不存在！');
                     resetForm(ruleFormRef.value);
+
                 });
 
             } catch (e) {
@@ -141,8 +149,9 @@ const resetForm = (formEl: FormInstance | undefined) => {
     width: 600px;
     margin: auto auto;
 }
-.formContainer{
-    top:20%;
+
+.formContainer {
+    top: 20%;
     left: 35%;
     position: absolute;
 }
