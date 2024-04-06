@@ -1,10 +1,11 @@
 <template>
     <div class="BDInfoContainer">
         <h3 class="BDName">
-            {{ name }}
+            <!-- {{ name }} -->
+            图书馆
         </h3>
         <div class="block">
-            <h3 class="demonstration">图书馆</h3>
+            <h3 class="demonstration">{{ }}</h3>
 
             <el-carousel height="300px">
                 <el-carousel-item v-for="item in 4" :key="item">
@@ -23,10 +24,15 @@
 </template>>
 
 <script lang="ts" setup>
+import { ref } from 'vue';
+import { useStore } from 'vuex'
+const infos = ref({})
+const store = useStore();
 const props = defineProps({
     name: String,    // 选中物体名
     intro: String    // 物体简介
 })
+// infos.value = store.getters[];
 
 </script>
 

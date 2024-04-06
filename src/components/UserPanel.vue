@@ -1,35 +1,11 @@
 <template>
-    <el-button class="button" type="primary" style="margin-left: 16px" @click="drawer = true">
-        >
-    </el-button>
+    <el-button class="user-button" type="primary" style="margin-right: 16px" @click="drawer = true">
+        > </el-button>
 
-    <el-drawer v-model="drawer" title="I'm outer Drawer" size="25%" :modal="false" :close-on-click-modal="false"
-        modal-class="modal" direction="ltr">
+    <el-drawer v-model="drawer" title="User Panel" size="74.7%" :modal="false" :close-on-click-modal="false"
+        modal-class="modal" direction="rtl">
 
-        <!-- 如果选中了建筑 -->
-        <div class="main_container" v-if="objName !== '' && !isDetail">
-            <h1 class="drawer_title">{{ objName }}</h1>
-            <div class="infinite-list" v-show="!isDetail" v-infinite-scroll="load" infinite-scroll-distance="30"
-                :infinite-scroll-disabled="disabled" infinite-scroll-immediate="false" style="overflow: auto">
-
-                <div class="post_list">
-                    <div v-for="post in posts" :key="posts.articleId">
-                        <SinglePost @click-child="clickEven(post.articleId)" :post="post"></SinglePost>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 如果没有选中建筑 -->
-        <div v-if="objName === '' && !isDetail">
-            <P>没有啦</P>
-        </div>
-
-        <!-- 如果选中了文章 -->
-        <div class="article" v-show="isDetail">
-            <ArticleDetail ref="articleRef"></ArticleDetail>
-            <button @click="goBack">返回</button>
-        </div>
+        <Home></Home>
 
     </el-drawer>
 </template>
@@ -37,9 +13,8 @@
 <script lang="ts" setup>
 import axios from 'axios';
 import { computed, inject, ref, toRefs, watch } from 'vue'
-import SinglePost from './SinglePost.vue';
-import ArticleDetail from '@/components/article/ArticleDetail.vue';
 import { useStore } from 'vuex'
+import Home from '@/components/menu/Home.vue'
 
 const store = useStore()
 const objName = computed(() => {
@@ -65,12 +40,8 @@ const articleRef = ref();
 const clickEven = (val: { content: string }) => {
     isDetail.value = true;
     try {
-        console.log("-------------" + val);
         articleRef.value.fetchArticle(val);
         articleRef.value.fetchComments(val);
-        // 设置文章Id
-        store.dispatch('article/updateArticleId', val)
-
     } catch (e) {
         console.log(e);
     }
@@ -176,17 +147,13 @@ watch(
 
 }
 
-.button {
+.user-button {
     position: absolute;
     top: 50%;
-    left: 0;
+    right: 0;
     z-index: 1000;
-}
-
-.drawer_title {
-    text-align: center;
-    font-size: 2em;
-    margin: auto;
+    justify-content: center;
+    justify-items: center;
 }
 </style>
   

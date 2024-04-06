@@ -6,6 +6,7 @@ import { provide, ref } from 'vue';
 import Drawer from '@/components/Drawer.vue';
 import ScrollList from '@/components/ScrollList.vue';
 import ArticleDetail from '@/components/article/ArticleDetail.vue';
+import UserPanel from '@/components/UserPanel.vue';
 
 const scrollRef = ref();
 const drawerRef = ref();
@@ -30,16 +31,14 @@ const clickEven = (val: { content: string; }) => {
 
         </el-header>
 
-        <el-aside>
-
+        <el-aside style="width:100%;height: 100vh;">
             <ScrollList class="scroll" ref="scrollRef"></ScrollList>
-            <!-- <Drawer ref="drawerRef">
-            </Drawer> -->
-
-            <!-- <ArticleDetail :id="1"></ArticleDetail> -->
+            <UserPanel class="scroll"></UserPanel>
         </el-aside>
 
         <Scene ref="scene" @click-child="clickEven"></Scene>
+
+
 
     </el-container>
 </template>
@@ -47,5 +46,20 @@ const clickEven = (val: { content: string; }) => {
 <style>
 .scroll {
     z-index: 1000;
+}
+
+.common-layout {
+    display: box;
+    width: 80%;
+    text-align: center;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+}
+
+.menu {
+    text-align: center;
+    height: 80%;
+    width: 80%;
 }
 </style>

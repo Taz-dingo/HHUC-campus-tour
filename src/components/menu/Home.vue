@@ -34,64 +34,61 @@
                             <Fold v-if="!isCollapse" />
                         </el-icon>
                     </div>
-                    <el-menu router :default-active="activePath" class="el-menu-vertical-demo" :collapse="isCollapse">
-                        <el-menu-item index="/index" @click="saveActiveNav('/index')">
-                            <el-icon>
-                                <house />
-                            </el-icon>
-                            <span>首页</span>
-                        </el-menu-item>
-                        <el-sub-menu index="1">
-                            <template #title>
-                                <el-icon>
-                                    <Setting />
-                                </el-icon>
-                                <span>系统设置</span>
-                            </template>
-                            <el-menu-item index="2-1">权限管理</el-menu-item>
-                        </el-sub-menu>
 
-                        <el-menu-item index="/user/list" @click="saveActiveNav('/user/list')">
+                    <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
+
+                        <el-menu-item index="1" @click="selectMenu('userInfo')">
                             <el-icon>
                                 <user />
                             </el-icon>
-
-                            <span>用户管理</span>
+                            <span>个人信息</span>
                         </el-menu-item>
-
-                        <el-menu-item index="/article/list" @click="saveActiveNav('/article/list')">
+                        <el-menu-item index="2" @click="selectMenu('myArticles')">
                             <el-icon>
-                                <Tickets />
+                                <document />
                             </el-icon>
-                            <span>文章管理</span>
+                            <span>我的文章</span>
                         </el-menu-item>
-
-                        <el-menu-item index="/comment/list" @click="saveActiveNav('/comment/list')">
+                        <el-menu-item index="3" @click="selectMenu('post')">
                             <el-icon>
-                                <Postcard />
+                                <setting />
                             </el-icon>
-                            <span>评论管理</span>
+                            <span>发表文章</span>
                         </el-menu-item>
-
+                        <el-menu-item index="4" @click="selectMenu('security')">
+                            <el-icon>
+                                <Edit />
+                            </el-icon>
+                            <span>账号与信息</span>
+                        </el-menu-item>
                     </el-menu>
+
+
+
                 </el-aside>
                 <el-container>
                     <el-main>
-                        <!-- 面包屑 -->
-                        <!-- <Breadcrumb /> -->
-                        <!-- 主要内容 -->
-                        <router-view></router-view>
+                        <UserInfo v-if="panel === 'userInfo'"></UserInfo>
+                        <MyArticles v-if="panel === 'myArticles'"></MyArticles>
+                        <Post v-if="panel === 'post'"></Post>
+                        <Security v-if="panel === 'security'"></Security>
+
                     </el-main>
-                    <el-footer>--</el-footer>
                 </el-container>
             </el-container>
         </el-container>
     </div>
 </template>
 <script setup>
-import { onBeforeMount, ref } from 'vue';
+import { onBeforeMount, ref, watch } from 'vue';
 // import avatar from "../assets/img/avator.jpg"
 import { useRouter } from 'vue-router'
+import UserInfo from '@/components/menu/UserInfo.vue'
+import MyArticles from '@/components/menu/MyArticles.vue'
+import Post from '@/components/menu/Post.vue'
+import Security from '@/components/menu/Security.vue'
+
+const panel = ref();
 const router = useRouter();
 // 挂载 DOM 之前
 onBeforeMount(() => {
@@ -102,20 +99,22 @@ onBeforeMount(() => {
 let isCollapse = ref(false);
 let activePath = ref("");
 // 保存链接的激活状态
-const saveActiveNav = (path) => {
-    sessionStorage.setItem("activePath", path);
-    activePath.value = path;
+const selectMenu = (val) => {
+    panel.value = val;
+    console.log(panel.value);
 }
 const logout = () => {
     // 清除缓存
     sessionStorage.clear();
     router.push("/login");
 }
+
 </script>
 
 <style scoped>
 .home-container {
-    position: absolute;
+    position: positive;
+    opacity: 1;
     height: 100%;
     top: 0px;
     left: 0px;
@@ -124,7 +123,7 @@ const logout = () => {
 }
 
 .el-header {
-    background: #2661ef;
+    background: #567edb;
     padding: 0 10px;
     overflow: hidden;
 }

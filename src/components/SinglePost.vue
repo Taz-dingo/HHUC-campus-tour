@@ -4,8 +4,12 @@
     <p>{{ post?.summary }}</p>
 
     <div class="footer">
-      <span>{{ post?.creatorName }}</span>
-      <span class="tag">{{ post?.tagOne }}</span>
+      <div>
+        <span>{{ post?.creatorName }}</span>
+      </div>
+      <div>
+        <span class="tag">{{ post?.tagOne }}</span>
+      </div>
       <div>
         <el-icon>
           <Clock />
@@ -35,25 +39,20 @@ const props = defineProps({
 
 <style>
 .footer {
-  display: flex;
-  align-content: space-between;
+  display: grid;
+  grid-template-columns: 20% 20% 60%;
 }
 
-.footer>div {
-  flex: 1;
-}
 
 .post {
-  margin: 0 40px 30px;
-  padding-bottom: 30px;
-  border-bottom: 1px dashed #e7e7e7;
+  margin: 0 40px 15px;
   border-radius: 10px;
 }
 
 .post h3 {
   display: inline-block;
   position: relative;
-  font-size: 26px;
+  font-size: 25px;
   color: black;
   margin-bottom: 10px;
   max-width: 400px;

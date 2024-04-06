@@ -97,6 +97,12 @@ const submitForm = (formEl: FormInstance | undefined) => {
                         store.dispatch('user/updateLogin', true);
                         store.dispatch('user/updateUserToken', response.headers['authorization']);
                         localStorage.token = store.getters['user/getUserToken'];
+                        // 更新user信息
+                        store.dispatch('user/updateUserInfo', response.data.data);
+                        localStorage.setItem("userInfo", JSON.stringify(store.getters['user/getUserInfo']));
+                        console.log(store.getters['user/getUserInfo']);
+
+                        console.log(JSON.parse(localStorage.getItem("userInfo")));
                         // 跳转到'/'
                         router.push('/');
                     }

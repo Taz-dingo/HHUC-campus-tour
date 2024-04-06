@@ -39,7 +39,7 @@
             <div v-infinite-scroll="fetchComments" infinite-scroll-distance="10" infinite-scroll-delay="200"
                 class="infinite-list" style="overflow: auto">
                 <el-scrollbar>
-                    <div class="comments" v-for="comment in comments" :key="comment.commentId">
+                    <div class="comments" v-for="(comment, index) in comments" :key="comment.commentId">
                         <div class="comment_container">
                             <el-avatar :size="avatarSizes[1]" />
                             <div>
@@ -51,9 +51,14 @@
                                 </p>
                             </div>
                         </div>
-                        <button class="reply_button" @click="clickReply">
+                        <button class="reply_button" @click="clickReply(index)">
                             回复
                         </button>
+                        <div v-if="showReply === index">
+                            <el-input type="textarea" placeholder="请输入回复内容" v-model="newReply">
+                            </el-input>
+                            <el-button type="primary" @click="submitReply(newReply, comment.commentId)">提交回复</el-button>
+                        </div>
 
                         <div class="reply_container" v-for="reply in comment.reply" :key="reply.commentId">
                             <el-avatar :size="avatarSizes[2]" />
@@ -79,12 +84,13 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
-import { getDetailArticle } from "@/api/article"
-import { getArticleComment } from "@/api/article"
+import { getDetailArticle, getArticleComment, addReply } from "@/api/article"
 import { useStore } from 'vuex'
+import getTime from '@/utils/getTime'
 
 const avatarSizes: Array<number> = [50, 40, 35];  // 分别是文章、回复、评论里的头像size
 
+var showReply: number;
 
 const store = useStore();
 const comments = computed(() => {
@@ -95,36 +101,31 @@ const article = computed(() => {
     return store.getters['article/getArticle'];
 })
 
+const articleId = ref()
+
 // 文章评论
 const articleComments = ref([]);
 const commentsReply = ref([]);
+const newReply = ref("")
 const newCommentContent = ref("");
 
-// const fetchArticle = async (id) => {
-//     const response = await axios({
-//         method: 'post',
-//         url: 'detailarticle',
-//         data: {
-//             articleId: id
-//         }
-//     });
-
-//     article.value = response.data.data;
-// };
 
 const fetchArticle = async (id: any) => {
+
+    articleId.value = id;
     await getDetailArticle({
-        articleId: id
+        articleId: articleId.value
     }).then((response) => {
         store.dispatch('article/updateArticle', response.data.data);
     });
 }
 
 const fetchComments = async (id: any) => {
+    console.log('eeeeeeeeeeee' + id)
     await getArticleComment({
         articlefatherId: id,
         page: 1,
-        pagesize: 20,
+        pagesize: 30,
         is_fresh: 1
     }).then((response) => {
         // 如果查询到的comments非空（有comments）
@@ -159,19 +160,42 @@ const fetchComments = async (id: any) => {
     });
 }
 
-
 const submitComment = async () => {
-    await axios.post("/api/comment", {
+    await addReply({
+        articlefatherId: store.getters['article/getArticleId'],
+        creatorId: JSON.parse(localStorage.getItem("userInfo")).userId,
+        commentfatherId: -1,
+        replyId: -1,
+        createTime: getTime(),
         content: newCommentContent.value,
-        articleId: props.id
+        is_parent_article: 1,    // 1表示文章的评论
     });
     newCommentContent.value = "";
-    await fetchComments();
+    await fetchComments(store.getters['article/getArticleId']);
 };
 
-const clickReply = () => {
-    alert('clicked');
+const submitReply = async (content: string, commentId: number) => {
+    await addReply({
+        articlefatherId: articleId.value,
+        creatorId: JSON.parse(localStorage.getItem("userInfo")).userId,
+
+        commentfatherId: commentId,
+        replyId: null,   // 被回复者id，先设置为空
+
+        createTime: getTime(),
+        content: content,
+        is_parent_article: 0,    // 0表示非文章评论，是评论的回复
+    });
+    newCommentContent.value = "";
+    await fetchComments(store.getters['article/getArticleId']);
 };
+
+const clickReply = (index) => {
+    showReply = index;
+
+    console.log(showReply);
+};
+
 
 
 defineExpose({ fetchArticle, fetchComments });

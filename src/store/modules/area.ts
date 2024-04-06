@@ -1,10 +1,8 @@
-const user = {
+const area = {
     namespaced: true,
 
     state: () => ({
-        login: false,    // 是否登录
-        userInfo: {},  // 用户信息
-        userToken: '',   // 用户登录token
+        id
     }),
 
     getters: {

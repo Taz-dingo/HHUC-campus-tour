@@ -18,9 +18,14 @@ request.interceptors.request.use((config) => {
     let whiteList = webConfig.whiteListApi
     let url = config.url
     let token = localStorage.getItem("token");
+    // config.withCredentials = true;
+    config.headers["Access-Control-Allow-Origin"] = "http://localhost:5173";
+    // config.headers["Origin"] = "http://localhost:5173";
+
     // url不在whiteList中且有token
     if (whiteList.indexOf(url) === -1 && token) {
-        config.headers.token = token;
+        // 'authorization' -> token
+        config.headers.authorization = token;
     }
     return config;
 }, error => {
@@ -48,3 +53,5 @@ request.interceptors.response.use((res) => {
     return Promise.reject(new Error(error));
 })
 export default request;
+
+

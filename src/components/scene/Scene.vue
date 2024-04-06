@@ -1,7 +1,6 @@
 <template>
     <div class="common-layout">
         <el-container>
-            <el-header style="z-index: 1;">Header</el-header>
             <div id="container" ref="containerRef">
 
                 <div class="infoContainer" style="pointer-events: auto;" ref="descRef">
@@ -17,8 +16,6 @@
                     <!-- <ScrollList></ScrollList> -->
                     <!-- <PostList :posts="posts"></PostList> -->
                 </div>
-
-
             </div>
 
         </el-container>
@@ -80,7 +77,7 @@ const height = window.innerHeight; //窗口文档显示区的高度作为画布�
 const stats = new Stats();
 stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom]
 document.body.appendChild(stats.dom);
-
+// 摄像机相关参数
 const cameraConfg = {
     fov: 40,
     near: 1,
@@ -94,6 +91,7 @@ gui.domElement.style.right = '0px';
 gui.domElement.style.width = '300px';
 
 const cameraFolder = gui.addFolder("相机属性设置");
+// 创建透视摄像机，设置摄像机视场角、最近最远可视距离
 const camera = new THREE.PerspectiveCamera(cameraConfg.fov, width / height, cameraConfg.near, cameraConfg.far);
 {
     cameraFolder.add(camera, 'fov', 20, 100).name('视角').onChange((num) => {
@@ -110,6 +108,7 @@ const camera = new THREE.PerspectiveCamera(cameraConfg.fov, width / height, came
     });
 }
 
+// 摄像机初始位置、初始朝向视点
 camera.position.set(200, 200, 200);
 camera.lookAt(0, 0, 0);
 
@@ -134,6 +133,7 @@ css3Renderer.domElement.style.top = '0px';
 css3Renderer.domElement.style.pointerEvents = 'none';
 document.body.appendChild(css3Renderer.domElement);
 
+// 创建渲染器
 // antialias抗锯齿
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 // 设置设备像素比。通常用于避免HiDPI设备上绘图模糊
@@ -181,36 +181,35 @@ sprite.scale.set(50, 25, 1); //只需要设置x、y两个分量就可以
 // scene.add(mesh2);
 // scene.add(sprite);
 
-// draco压缩解码导入
+// draco压缩解码导入器
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('/static/jsm/libs/draco/gltf/');
-
+// GLTF文件装载器
 const loader = new GLTFLoader();
 loader.setDRACOLoader(dracoLoader);
 loader.load('/static/model3/library.gltf', function (gltf) {
 
     const model = gltf.scene;
+    // 模型相关参数
     const modelConfg = {
         x: 455,
         y: 0,
         z: 280
     }
+    // 模型初始坐标设置
     model.position.set(modelConfg.x, modelConfg.y, modelConfg.z);
+    // 模型坐标变换GUI设置
     const modelFolder = gui.addFolder("模型属性设置");
     modelFolder.add(model.position, 'x', 0, 1000);
     modelFolder.add(model.position, 'y', 0, 1000);
     modelFolder.add(model.position, 'z', 0, 1000);
 
-    // model.scale.set( 0.01, 0.01, 0.01 );
     scene.add(model);
 
-
-    animate();
+    animate();  // 执行渲染
 
 }, onProgress, function (e) {
-
-    console.error(e);
-
+    console.error(e);   // 导入文件异常打印
 });
 
 // 加载过程回调函数-可以获得加载进度
@@ -254,15 +253,16 @@ meshFolder.add(mesh.position, 'y', -500, 1000);
 meshFolder.add(mesh.position, 'z', -500, 1000);
 
 
-// 创建网格模型，：表示物体
+// 创建网格模型，表示物体
+// 模型大小
 const mesh0 = new THREE.Mesh(new THREE.BoxGeometry(80, 32, 80), material);  // library
 const mesh1 = new THREE.Mesh(new THREE.BoxGeometry(75, 25, 70), material);   // A
 const mesh2 = new THREE.Mesh(new THREE.BoxGeometry(75, 25, 70), material);   // B
 const mesh3 = new THREE.Mesh(new THREE.BoxGeometry(71, 20, 75), material);   // C
 const mesh4 = new THREE.Mesh(new THREE.BoxGeometry(71, 20, 75), material);   // D    
 const mesh5 = new THREE.Mesh(new THREE.BoxGeometry(65, 26, 65), material);   // E
-
-mesh0.name = 'library';
+// 模型坐标与名字
+mesh0.name = 'L';
 mesh0.position.set(-5, 26, -1);
 mesh1.name = 'A';
 mesh1.position.set(56, 20, -144);
@@ -347,7 +347,7 @@ function onPointerClick(event: { clientX: number; clientY: number; }) {
 
 }
 
-
+// 动画渲染函数，画面发生改变时调用
 function animate() {
     requestAnimationFrame(animate);
 
@@ -374,7 +374,6 @@ const clickChild = renderer.domElement.addEventListener('click', function (event
     // 先清空之前的信息
     posts.value = []
     // chooseObj?.remove(descObj);
-
     onPointerClick(event);
     // 在点击位置生成raycaster射线ray
     raycaster.setFromCamera(pointer, camera);
@@ -410,6 +409,7 @@ const clickChild = renderer.domElement.addEventListener('click', function (event
 
 // const posts:Array<any> = [];
 
+// 组件挂载完成后执行
 onMounted(() => {
     // dom操作
     console.log(containerRef.value);
@@ -424,13 +424,11 @@ onMounted(() => {
             chooseObj.remove(descObj); //从场景移除
         }
     })
-
+    // 挂载DOM元素
     containerRef.value.appendChild(renderer.domElement);
     gui.domElement.style.top = containerRef.value.getBoundingClientRect().top.toString() + 'px';
+    // gui.hide(); // 隐藏gui
     stats.dom.style.top = containerRef.value.getBoundingClientRect().top.toString() + 'px';
-    // stats.dom.style.right='0px';
-    // stats.dom.style.bottom='0px';
-    // stats.dom.style.display='flex';
 
     descObj = new CSS2DObject(descRef.value);
     desc3DObj = new CSS3DObject(descRef.value);
@@ -438,8 +436,6 @@ onMounted(() => {
 });
 
 </script>
-
-
 
 
 <style>
